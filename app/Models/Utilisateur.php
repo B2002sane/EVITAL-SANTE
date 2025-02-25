@@ -3,8 +3,13 @@
 namespace App\Models;
 
 use MongoDB\Laravel\Eloquent\Model;
+use Illuminate\Foundation\Auth\User as Authenticatable;
 
-class Utilisateur extends Model
+
+use Tymon\JWTAuth\Contracts\JWTSubject;
+
+//class Utilisateur extends Model
+class Utilisateur extends Authenticatable implements JWTSubject
 {
     protected $connection = 'mongodb';
     protected $collection = 'utilisateurs';
@@ -51,11 +56,12 @@ class Utilisateur extends Model
 
 
      // Relations
-     public function dossiersMedicaux()
+     
+     public function dossierMedical()
      {
-         return $this->hasMany(DossierMedical::class, 'patientId');
+         return $this->hasOne(DossierMedical::class, 'patientId');
      }
- 
+     
      
      public function rendezVous()
      {
@@ -81,6 +87,25 @@ class Utilisateur extends Model
     public function demandesDonsAcceptees()
     {
         return $this->hasMany(DemandeDon::class, 'donneurId');
+    }
+
+
+    //relation pour récupérer les constantes vitales associées à un patient:
+    public function constantesVitales()
+{
+    return $this->hasMany(ConstanteVitale::class, 'patientId');
+}
+
+
+
+    public function getJWTIdentifier()
+    {
+        return $this->getKey();
+    }
+
+    public function getJWTCustomClaims()
+    {
+        return [];
     }
 
 }

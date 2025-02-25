@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Str;
+use PHPOpenSourceSaver\JWTAuth\Facades\JWTAuth;
 
 class UtilisateurController extends Controller
 {
@@ -274,4 +275,136 @@ class UtilisateurController extends Controller
             ], 500);
         }
     }
+
+    # Connexion de l'utilisateur
+   /* 
+   public function login(Request $request)
+   {
+       try {
+           // Validation des données
+           $validator = Validator::make($request->all(), [
+               'email' => 'required|email',
+               'password' => 'required|string|min:6',
+           ], [
+               'required' => 'Le champ :attribute est obligatoire',
+               'email' => 'Le format de l\'email est invalide',
+               'min' => 'Le champ :attribute doit contenir au moins :min caractères',
+           ]);
+
+           if ($validator->fails()) {
+               return response()->json([
+                   'status' => false,
+                   'message' => 'Erreur de validation',
+                   'errors' => $validator->errors()
+               ], 422);
+           }
+
+           // Récupération des données validées
+           $credentials = $validator->validated();
+
+           // Vérification des informations d'identification
+           $utilisateur = Utilisateur::where('email', $credentials['email'])->first();
+
+           if (!$utilisateur || !Hash::check($credentials['password'], $utilisateur->password)) {
+               return response()->json([
+                   'status' => false,
+                   'message' => 'Email ou mot de passe incorrect'
+               ], 401);
+           }
+
+           // Générer un token JWT pour l'utilisateur
+           $token = JWTAuth::fromUser($utilisateur);
+
+           // Masquer le mot de passe dans la réponse
+           $utilisateur->makeHidden(['password', 'remember_token']);
+
+           return response()->json([
+               'status' => true,
+               'message' => 'Connexion réussie',
+               'token' => $token,
+               'user' => [
+                'id' => $utilisateur->id,
+                'nom' => $utilisateur->nom,
+                'prenom' => $utilisateur->prenom,
+                'role' => $utilisateur->role
+            ]
+           ], 200);
+
+       } catch (\Exception $e) {
+           return response()->json([
+               'status' => false,
+               'message' => 'Une erreur est survenue lors de la connexion',
+               'error' => $e->getMessage()
+           ], 500);
+       }
+   }*/
+
+
+
+    /*
+
+   // Fonction pour se connecter avec la carte RFID
+    public function loginByCard(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'codeRfid' => 'required|string|max:255',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 400);
+        }
+
+        $codeRfid = $request->input('codeRfid');
+        $utilisateur = Utilisateur::where('codeRfid', $codeRfid)->first();
+
+      if ($utilisateur && $utilisateur->status === 'actif') {
+            // Générer un token JWT pour l'utilisateur
+            $token = JWTAuth::fromUser($utilisateur);
+
+            return response()->json([
+                'message' => 'Connexion réussie',
+                'token' => $token,
+                'user' => [
+                    'id' => $utilisateur->id,
+                    'nom' => $utilisateur->nom,
+                    'prenom' => $utilisateur->prenom,
+                    'role' => $utilisateur->role
+                ]
+            ], 200);
+        } else {
+            return response()->json(['error' => 'Carte RFID non reconnue ou compte bloqué'], 401);
+        }
+    }*/
+      
+
+
+     // Fonction pour se déconnecter
+    /* public function logout(Request $request)
+     {
+         $token = $request->bearerToken();
+ 
+         if (!$token) {
+             return response()->json(['error' => 'Token non fourni'], 400);
+         }
+ 
+         try {
+             // Optionnel : vérifier si le token est valide avant d'invalider
+             $tokenPayload = JWTAuth::setToken($token)->getPayload();
+ 
+             if ($tokenPayload) {
+                 JWTAuth::invalidate($token);
+                 return response()->json(['message' => 'Déconnexion réussie'], 200);
+             }
+ 
+             return response()->json(['error' => 'Token invalide ou expiré'], 401);
+ 
+         } catch (\Tymon\JWTAuth\Exceptions\TokenExpiredException $e) {
+             return response()->json(['error' => 'Le token est déjà expiré'], 401);
+         } catch (\Tymon\JWTAuth\Exceptions\TokenInvalidException $e) {
+             return response()->json(['error' => 'Token invalide'], 401);
+         } catch (\Tymon\JWTAuth\Exceptions\JWTException $e) {
+             return response()->json(['error' => 'Impossible d\'invalider le token'], 500);
+         }
+     } */
+
 }
