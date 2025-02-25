@@ -13,7 +13,19 @@ class DossierMedical extends Model
         'idDossier',
         'poids',
         'prescriptions',
-        'patientId', //  champ pour lier à un patient
+        'taille',
+        'derniereVisite',
+        'patientId',
+        'numeroDossier',
+        'nom',
+        'prenom',
+        'sexe',
+        'groupeSanguin',
+        'dateNaissance',
+        'maladies',
+        'numeroChambre',
+        'numeroLit',
+
     ];
 
     // Relation avec le modèle Utilisateur (patient)
@@ -22,11 +34,12 @@ class DossierMedical extends Model
         return $this->belongsTo(Utilisateur::class, 'patientId');
     }
 
-     // Relation avec les constantes vitales
-     public function constantesVitales()
-     {
-         return $this->hasMany(ConstanteVitale::class, 'dossierMedicalId');
-     }
+    // Relation avec les constantes vitales
+    public function constantesVitales()
+    {
+        return $this->hasMany(ConstanteVitale::class, 'dossierMedicalId');
+    }
+
  
      // Relation avec les rendez-vous
      public function rendezVous()

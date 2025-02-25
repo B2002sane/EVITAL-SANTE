@@ -61,7 +61,7 @@ return [
 
     'providers' => [
         'users' => [
-            'driver' => 'mongodb',
+            'driver' => 'eloquent',
             'model' => env('AUTH_MODEL', App\Models\Utilisateur::class),
         ],
 
