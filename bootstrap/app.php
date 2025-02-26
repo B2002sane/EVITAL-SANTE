@@ -12,8 +12,16 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
-        //
+        // Enregistrer le middleware personnalisé
+        $middleware->alias([
+            'jwt.auth' => \App\Http\Middleware\JwtAuthMiddleware::class,
+        ]);
+
+           // Vous pouvez également ajouter des middlewares globaux ou de groupe ici
+        // Exemple : $middleware->appendToGroup('web', \App\Http\Middleware\EncryptCookies::class);
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //
     })->create();
+
+    

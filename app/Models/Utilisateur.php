@@ -3,14 +3,13 @@
 namespace App\Models;
 
 use MongoDB\Laravel\Eloquent\Model;
-use Illuminate\Foundation\Auth\User as Authenticatable;
+use Tymon\JWTAuth\Contracts\JWTSubject;
+use Illuminate\Auth\Authenticatable; // Ajoutez ce trait
+use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract; // Ajoutez cette interface
 
-
-use PHPOpenSourceSaver\JWTAuth\Contracts\JWTSubject;
-
-class Utilisateur extends Model
-//class Utilisateur extends Authenticatable implements JWTSubject
+class Utilisateur extends Model implements JWTSubject, AuthenticatableContract
 {
+    use Authenticatable; // Utilisez ce trait
     protected $connection = 'mongodb';
     protected $collection = 'utilisateurs';
 
@@ -98,7 +97,7 @@ class Utilisateur extends Model
 
 
 
-/*    public function getJWTIdentifier()
+  public function getJWTIdentifier()
     {
         return $this->getKey();
     }
@@ -107,5 +106,5 @@ class Utilisateur extends Model
     {
         return [];
     }
-*/
+
 }

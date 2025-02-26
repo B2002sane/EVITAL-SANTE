@@ -15,7 +15,7 @@ Route::get('/user', function (Request $request) {
 })->middleware('auth:sanctum');
 
 # Routes pour la gestion des utilisateurs
-Route::prefix('utilisateurs')->group(function () {
+Route::prefix('utilisateurs')->middleware('jwt.auth:MEDECIN_CHEF')->group(function () {
     Route::get('/', [UtilisateurController::class, 'index']);
     Route::post('/', [UtilisateurController::class, 'store']);
     Route::get('/{id}', [UtilisateurController::class, 'show']);
@@ -49,6 +49,6 @@ Route::post('/dossiers-medicaux/{dossierMedicalId}/constantes-vitales', [Dossier
 Route::post('/dossiers-medicaux/{dossierMedicalId}/rendez-vous', [DossierMedicalController::class, 'addRendezVous']);  // Ajouter un rendez-vous au dossier médical
 
 # Routes pour le login
-/*Route::post('/login', [AuthController::class, 'login']);
+Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout']); // Déconnexion
-Route::post('/login-by-card', [AuthController::class, 'loginByCard']);*/
+Route::post('/login-by-card', [AuthController::class, 'loginByCard']);
