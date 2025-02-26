@@ -275,6 +275,57 @@ class UtilisateurController extends Controller
             ], 500);
         }
     }
+    
+    /**
+ * Assigner une carte RFID à un utilisateur
+ */
+public function assignerCarte(Request $request, $id)
+{
+    // Validation des données
+    $validator = Validator::make($request->all(), [
+        'codeRfid' => 'required|string|unique:utilisateurs,codeRfid',
+    ], [
+        'codeRfid.required' => 'Le champ code RFID est obligatoire.',
+        'codeRfid.string' => 'Le champ code RFID doit être une chaîne de caractères.',
+        'codeRfid.unique' => 'Cette carte RFID est déjà utilisée.',
+    ]);
+
+    if ($validator->fails()) {
+        return response()->json([
+            'status' => false,
+            'message' => 'Erreur de validation',
+            'errors' => $validator->errors()
+        ], 422);
+    }
+
+    // Récupérer l'utilisateur
+    $utilisateur = Utilisateur::find($id);
+
+    if (!$utilisateur) {
+        return response()->json([
+            'status' => false,
+            'message' => 'Utilisateur non trouvé'
+        ], 404);
+    }
+
+    // Vérifier si l'utilisateur a déjà une carte RFID
+    if ($utilisateur->codeRfid) {
+        return response()->json([
+            'status' => false,
+            'message' => 'Cet utilisateur a déjà une carte RFID attribuée'
+        ], 400);
+    }
+
+    // Attribuer la carte RFID à l'utilisateur
+    $utilisateur->codeRfid = $request->codeRfid;
+    $utilisateur->save();
+
+    return response()->json([
+        'status' => true,
+        'message' => 'Carte RFID attribuée avec succès',
+        'data' => $utilisateur
+    ], 200);
+}
 
 
 }

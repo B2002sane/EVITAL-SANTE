@@ -83,4 +83,64 @@ class AuthController extends Controller
            ], 500);
        }
    }
+
+
+   public function loginByCard(Request $request)
+{
+    // Validation des données
+    $validator = Validator::make($request->all(), [
+        'codeRfid' => 'required|string',
+    ], [
+        'codeRfid.required' => 'Le champ code RFID est obligatoire.',
+        'codeRfid.string' => 'Le champ code RFID doit être une chaîne de caractères.',
+        
+    ]);
+
+    if ($validator->fails()) {
+        return response()->json([
+            'status' => false,
+            'message' => 'Erreur de validation',
+            'errors' => $validator->errors()
+        ], 422);
+    }
+
+    // Récupérer l'utilisateur par son code RFID
+    $utilisateur = Utilisateur::where('codeRfid', $request->codeRfid)->first();
+
+    if (!$utilisateur) {
+        return response()->json([
+            'status' => false,
+            'message' => 'Carte RFID non reconnue'
+        ], 404);
+    }
+
+    // Vérifier si l'utilisateur est actif
+    if ($utilisateur->status === false) {
+        return response()->json([
+            'status' => false,
+            'message' => 'Votre compte est désactivé'
+        ], 403);
+    }
+
+    // Générer un token JWT pour l'utilisateur
+    try {
+        $token = JWTAuth::fromUser($utilisateur);
+    } catch (JWTException $e) {
+        return response()->json([
+            'status' => false,
+            'message' => 'Impossible de créer un token',
+            'error' => $e->getMessage()
+        ], 500);
+    }
+
+    // Masquer le mot de passe dans la réponse
+    $utilisateur->makeHidden(['password', 'remember_token']);
+
+    return response()->json([
+        'status' => true,
+        'message' => 'Connexion réussie',
+        'data' => $utilisateur,
+        'token' => $token
+    ], 200);
+}
 }

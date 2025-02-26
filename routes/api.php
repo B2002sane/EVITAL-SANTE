@@ -21,6 +21,7 @@ Route::prefix('utilisateurs')->middleware('jwt.auth:MEDECIN_CHEF')->group(functi
     Route::get('/{id}', [UtilisateurController::class, 'show']);
     Route::put('/{id}', [UtilisateurController::class, 'update']);
     Route::delete('/{id}', [UtilisateurController::class, 'destroy']);
+    Route::post('/{id}/assigner-carte', [UtilisateurController::class, 'assignerCarte']);
 });
 
 # Routes pour la gestion des rendez-vous
@@ -51,4 +52,4 @@ Route::post('/dossiers-medicaux/{dossierMedicalId}/rendez-vous', [DossierMedical
 # Routes pour le login
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout']); // Déconnexion
-Route::post('/login-by-card', [AuthController::class, 'loginByCard']);
+Route::post('/loginbycard', [AuthController::class, 'loginByCard']);
