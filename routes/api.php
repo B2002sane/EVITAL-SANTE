@@ -9,6 +9,8 @@ use App\Http\Controllers\UtilisateurController;
 use App\Http\Controllers\RendezVousController;
 use App\Http\Controllers\DemandeDonController;
 use App\Http\Controllers\AuthController;
+# routes pour la gestion des chambres
+use App\Http\Controllers\ChambreController;
 
 
 Route::get('/user', function (Request $request) {
@@ -23,12 +25,15 @@ Route::prefix('utilisateurs')->middleware('jwt.auth:MEDECIN_CHEF')->group(functi
     Route::put('/{id}', [UtilisateurController::class, 'update']);
     Route::delete('/{id}', [UtilisateurController::class, 'destroy']);
     Route::post('/{id}/assigner-carte', [UtilisateurController::class, 'assignerCarte']);
+
 });
 
 # Routes pour la gestion des rendez-vous
+Route::prefix()->middleware('jwt.auth:MEDECIN_CHEF', 'MEDECIN')->group(function () {
 Route::apiResource('rendez-vous', RendezVousController::class);
 Route::get('patient/{patientId}/rendez-vous', [RendezVousController::class, 'getPatientRendezVous']);
 Route::get('medecin/{medecinId}/rendez-vous', [RendezVousController::class, 'getMedecinRendezVous']);
+});
 
 # Routes pour les demandes de don
 Route::get('medecins/{medecinId}/demandes-don', [DemandeDonController::class, 'index']);
@@ -40,12 +45,8 @@ Route::get('demandes-don-disponibles/{groupeSanguin?}', [DemandeDonController::c
 Route::post('demandes-don/{id}/accepter', [DemandeDonController::class, 'accepterDemande']);
 
 
-
-# routes pour la gestion des chambres
-use App\Http\Controllers\ChambreController;
 // Routes CRUD de base
 Route::apiResource('chambres', ChambreController::class);
-
 // Routes supplémentaires pour la gestion des lits
 Route::post('chambres/{id}/assigner-lit', [ChambreController::class, 'assignerLit']);
 Route::post('chambres/{id}/liberer-lit', [ChambreController::class, 'libererLit']);
@@ -69,5 +70,6 @@ Route::post('/dossiers-medicaux/{dossierMedicalId}/rendez-vous', [DossierMedical
 
 # Routes pour le login
 Route::post('/login', [AuthController::class, 'login']);
-Route::post('/logout', [AuthController::class, 'logout']); // Déconnexion
 Route::post('/loginbycard', [AuthController::class, 'loginByCard']);
+Route::post('/logout', action: [AuthController::class, 'logout']); // Déconnexion
+
