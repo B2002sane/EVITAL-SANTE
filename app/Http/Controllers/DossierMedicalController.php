@@ -46,11 +46,11 @@ class DossierMedicalController extends Controller
                 }
     
                 $validator = Validator::make($request->all(), [
-                    'poids' => 'required|integer',
+                   // 'poids' => 'required|integer',
                     'prescriptions' => 'nullable|string',
                     'taille' => 'required|numeric',
                     'derniereVisite' => 'nullable|date',
-                    'sexe' => 'required|string',
+                    //'sexe' => 'required|string',
                     'groupeSanguin' => 'required|string',
                     'dateNaissance' => 'required|date',
                     'maladies' => 'nullable|string',
@@ -98,11 +98,11 @@ class DossierMedicalController extends Controller
                 }
     
                 $validator = Validator::make($request->all(), [
-                    'poids' => 'integer',
+                    //'poids' => 'integer',
                     'prescriptions' => 'nullable|string',
                     'taille' => 'numeric',
                     'derniereVisite' => 'date',
-                    'sexe' => 'string',
+                   // 'sexe' => 'string',
                     'groupeSanguin' => 'string',
                     'dateNaissance' => 'date',
                     'maladies' => 'nullable|string',

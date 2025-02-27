@@ -257,12 +257,12 @@ class UtilisateurController extends Controller
                 'telephone' => ['string', Rule::unique('utilisateurs')->ignore($id)],
                 'email' => ['email', Rule::unique('utilisateurs')->ignore($id)],
                 'password' => 'nullable|string|min:6',
-                'role' => [Rule::in(['PATIENT', 'MEDECIN', 'MEDECIN_CHEF', 'DONNEUR'])],
+                'role' => [Rule::in(['PATIENT', 'MEDECIN', 'INFIRMIER','MEDECIN_CHEF', 'DONNEUR'])],
                 'genre' => [Rule::in(['HOMME', 'FEMME'])],
                 'photo' => 'nullable|string',
                 'dateNaissance' => 'date|nullable',
                 'groupeSanguin' => [Rule::in(['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'])],
-                'categorie' => [Rule::in(['FEMME_ENCEINTE', 'PERSONNE_AGEE', 'MALADE_CHRONIQUE'])],
+                'categorie' => [Rule::in(['FEMME_ENCEINTE', 'PERSONNE_AGEE', 'MALADE_CHRONIQUE','ENFANT','AUTRE'])],
                 'poids' => 'numeric|min:0|nullable',
                 'codeRfid' => ['string', Rule::unique('utilisateurs')->ignore($id), 'nullable'],
             ]);
@@ -333,6 +333,61 @@ class UtilisateurController extends Controller
             ], 500);
         }
     }
+
+    /**
+ * Supprimer plusieurs utilisateurs en une seule requête
+ */
+public function destroyMultiple(Request $request)
+{
+    try {
+        // Validation des données
+        $validator = Validator::make($request->all(), [
+            'ids' => 'required|array',
+            'ids.*' => 'required|exists:utilisateurs,_id',
+        ], [
+            'ids.required' => 'Le champ ids est obligatoire.',
+            'ids.array' => 'Le champ ids doit être un tableau.',
+            'ids.*.required' => 'Chaque ID dans le tableau est obligatoire.',
+            'ids.*.exists' => 'Un ou plusieurs IDs sont invalides.',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Erreur de validation',
+                'errors' => $validator->errors()
+            ], 422);
+        }
+
+        // Récupérer les IDs des utilisateurs à supprimer
+        $ids = $request->ids;
+
+        // Log des IDs reçus
+        \Log::info('IDs reçus pour suppression :', $ids);
+
+        // Suppression logique des utilisateurs
+        $affectedRows = Utilisateur::whereIn('_id', $ids)->update(['archive' => true]);
+
+        // Log du nombre d'utilisateurs affectés
+        \Log::info('Nombre d\'utilisateurs archivés :', ['count' => $affectedRows]);
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Utilisateurs supprimés avec succès',
+            'data' => [
+                'ids' => $ids
+            ]
+        ], 200);
+
+    } catch (\Exception $e) {
+        return response()->json([
+            'status' => false,
+            'message' => 'Une erreur est survenue lors de la suppression des utilisateurs',
+            'error' => $e->getMessage()
+        ], 500);
+    }
+}
+
     
     /**
  * Assigner une carte RFID à un utilisateur
