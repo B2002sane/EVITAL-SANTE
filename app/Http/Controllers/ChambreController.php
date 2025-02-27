@@ -31,12 +31,13 @@ class ChambreController extends Controller
         return response()->json(['chambres' => $chambres]);
     }
 
+
+
+
     /**
      * Créer une nouvelle chambre
      */
   
-
-
         public function store(Request $request)
     {
         // Règles de validation
@@ -95,6 +96,8 @@ class ChambreController extends Controller
         return response()->json(['chambre' => $chambre]);
     }
 
+
+
     /**
      * Mettre à jour une chambre
      */
@@ -115,12 +118,12 @@ class ChambreController extends Controller
             return response()->json(['errors' => $validator->errors()], 422);
         }
 
-        // Ne pas permettre la modification du nombre de lits si des patients sont présents
-        if ($request->has('nombreLits') && $chambre->nombreLitsOccupes() > 0) {
-            return response()->json([
-                'message' => 'Impossible de modifier le nombre de lits quand la chambre est occupée'
-            ], 422);
-        }
+        // // Ne pas permettre la modification du nombre de lits si des patients sont présents
+        // if ($request->has('nombreLits') && $chambre->nombreLitsOccupes() > 0) {
+        //     return response()->json([
+        //         'message' => 'Impossible de modifier le nombre de lits quand la chambre est occupée'
+        //     ], 422);
+        // }
 
         $chambre->update($request->only(['numero', 'disponible']));
 
@@ -131,6 +134,12 @@ class ChambreController extends Controller
 
         return response()->json(['chambre' => $chambre]);
     }
+
+
+
+
+
+
 
     /**
      * Supprimer une chambre
@@ -153,6 +162,10 @@ class ChambreController extends Controller
         return response()->json(['message' => 'Chambre supprimée avec succès']);
     }
 
+
+
+
+
     /**
      * Assigner un lit à un patient
      */
@@ -173,7 +186,7 @@ class ChambreController extends Controller
         }
 
         $patient = Utilisateur::find($request->patientId);
-        if (!$patient || $patient->role !== 'patient') {
+        if (!$patient || $patient->role !== 'PATIENT') {
             return response()->json(['message' => 'Patient non valide'], 422);
         }
 
@@ -199,6 +212,11 @@ class ChambreController extends Controller
 
         return response()->json(['message' => 'Lit déjà occupé'], 422);
     }
+
+
+
+
+
 
     /**
      * Libérer un lit
@@ -244,6 +262,12 @@ class ChambreController extends Controller
         return response()->json(['message' => 'Lit déjà libre'], 422);
     }
 
+
+
+
+
+
+
     /**
      * Obtenir les chambres disponibles
      */
@@ -253,6 +277,11 @@ class ChambreController extends Controller
         return response()->json(['chambres' => $chambres]);
     }
 
+
+
+
+
+    
     /**
      * Obtenir le statut d'occupation d'une chambre
      */

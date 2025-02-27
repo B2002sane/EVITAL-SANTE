@@ -1,5 +1,6 @@
 <?php
 
+
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -44,3 +45,47 @@ Route::delete('demandes-don/{id}', [DemandeDonController::class, 'destroy']);
 
 Route::get('demandes-don-disponibles/{groupeSanguin?}', [DemandeDonController::class, 'demandesDisponibles']);
 Route::post('demandes-don/{id}/accepter', [DemandeDonController::class, 'accepterDemande']);
+
+
+
+# routes pour la gestion des chambres
+use App\Http\Controllers\ChambreController;
+// Routes CRUD de base
+Route::apiResource('chambres', ChambreController::class);
+
+// Routes supplémentaires pour la gestion des lits
+Route::post('chambres/{id}/assigner-lit', [ChambreController::class, 'assignerLit']);
+Route::post('chambres/{id}/liberer-lit', [ChambreController::class, 'libererLit']);
+Route::get('chambres-disponibles', [ChambreController::class, 'chambresDisponibles']);
+Route::get('chambres/{id}/statut', [ChambreController::class, 'statutOccupation']);
+
+
+
+use App\Http\Controllers\ConstanteVitaleController;
+
+# Routes pour la gestion des constantes vitales
+Route::post('/patients/{patientId}/constantes-vitales', [ConstanteVitaleController::class, 'addConstanteForPatient']);  //ajouter constante-vitale à un patient
+Route::post('/dossiers-medicaux/{dossierMedicalId}/constantes-vitales', [ConstanteVitaleController::class, 'addconstanteForDossierMedical']); //ajouter constante-vitale à un dossier medical
+
+
+
+use App\Http\Controllers\DossierMedicalController;
+# Routes pour la gestion des dossiers médicaux
+Route::post('/patients/{patientId}/dossiers-medical', [DossierMedicalController::class, 'create']);  // Créer un nouveau dossier médical
+Route::put('/dossiers-medicaux/{id}', [DossierMedicalController::class, 'update']);  // Mettre à jour un dossier médical existant
+Route::post('/dossiers-medicaux/{dossierMedicalId}/rendez-vous', [DossierMedicalController::class, 'addRendezVous']);  // Ajouter un rendez-vous au dossier médical
+
+
+
+// route pour la connexion
+use App\Http\Controllers\AuthController;    
+
+Route::post('login', [AuthController::class, 'login']);
+Route::post('logout', [AuthController::class, 'logout']);
+
+
+use App\Http\Controllers\PasswordOublierController;
+
+Route::post('forgot', [PasswordOublierController::class, 'sendResetLink']);
+Route::post('reset', [PasswordOublierController::class, 'resetPassword']);
+

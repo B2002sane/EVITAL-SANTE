@@ -7,6 +7,8 @@ use App\Models\RendezVous;
 use App\Models\Utilisateur;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\RendezVousNotification;    
 
 class RendezVousController extends Controller
 {
@@ -18,6 +20,10 @@ class RendezVousController extends Controller
         $rendezVous = RendezVous::with(['patient', 'medecin'])->get();
         return response()->json(['rendezVous' => $rendezVous]);
     }
+
+
+
+
 
     /**
      * Créer un nouveau rendez-vous
@@ -49,8 +55,21 @@ class RendezVousController extends Controller
         // }
 
         $rendezVous = RendezVous::create($request->all());
+
+
+        $rendezVous->load(['patient', 'medecin']); // Charger explicitement les relations
+
+        // Envoyer un email au patient
+        Mail::to($rendezVous->patient->email)->send(new RendezVousNotification($rendezVous));
+            // Envoyer un email au patient
+       // Mail::to($rendezVous->patient->email)->send(new RendezVousNotification($rendezVous));
+
         return response()->json(['rendezVous' => $rendezVous], 201);
     }
+
+
+
+
 
     /**
      * Afficher un rendez-vous spécifique

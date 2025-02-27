@@ -2,10 +2,17 @@
 
 namespace App\Models;
 
+
+use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Auth\Authenticatable as AuthenticatableTrait;
+use Illuminate\Contracts\Auth\Authenticatable;
 use MongoDB\Laravel\Eloquent\Model;
 
 class Utilisateur extends Model
 {
+
+    use HasApiTokens, AuthenticatableTrait;
+    
     protected $connection = 'mongodb';
     protected $collection = 'utilisateurs';
 
@@ -67,13 +74,15 @@ class Utilisateur extends Model
         return $this->hasMany(RendezVous::class, 'medecinId');
     }
 
- 
-    //  public function demandesDons()
-    //  {
-    //      return $this->hasMany(DemandeDon::class, 'donneurId');
-    //  }
 
-        public function demandesDonsCreees()
+    public function chambre()
+    {
+        return $this->belongsTo(Chambre::class, 'chambreId');
+    }
+
+
+
+    public function demandesDonsCreees()
     {
         return $this->hasMany(DemandeDon::class, 'medecinId');
     }
