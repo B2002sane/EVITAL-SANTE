@@ -1,5 +1,6 @@
 <?php
 
+
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ConstanteVitaleController;
@@ -37,6 +38,23 @@ Route::put('demandes-don/{id}', [DemandeDonController::class, 'update']);
 Route::delete('demandes-don/{id}', [DemandeDonController::class, 'destroy']);
 Route::get('demandes-don-disponibles/{groupeSanguin?}', [DemandeDonController::class, 'demandesDisponibles']);
 Route::post('demandes-don/{id}/accepter', [DemandeDonController::class, 'accepterDemande']);
+
+
+
+# routes pour la gestion des chambres
+use App\Http\Controllers\ChambreController;
+// Routes CRUD de base
+Route::apiResource('chambres', ChambreController::class);
+
+// Routes supplémentaires pour la gestion des lits
+Route::post('chambres/{id}/assigner-lit', [ChambreController::class, 'assignerLit']);
+Route::post('chambres/{id}/liberer-lit', [ChambreController::class, 'libererLit']);
+Route::get('chambres-disponibles', [ChambreController::class, 'chambresDisponibles']);
+Route::get('chambres/{id}/statut', [ChambreController::class, 'statutOccupation']);
+
+
+
+//use App\Http\Controllers\ConstanteVitaleController;
 
 # Routes pour la gestion des constantes vitales
 Route::post('/patients/{patientId}/constantes-vitales', [ConstanteVitaleController::class, 'addConstanteForPatient']);  //ajouter constante-vitale à un patient
