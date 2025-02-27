@@ -70,18 +70,14 @@ Route::post('/dossiers-medicaux/{dossierMedicalId}/constantes-vitales', [Constan
 
 
 use App\Http\Controllers\DossierMedicalController;
-# Routes pour la gestion des dossiers médicaux
-Route::post('/patients/{patientId}/dossiers-medical', [DossierMedicalController::class, 'create']);  // Créer un nouveau dossier médical
-Route::put('/dossiers-medicaux/{id}', [DossierMedicalController::class, 'update']);  // Mettre à jour un dossier médical existant
-Route::post('/dossiers-medicaux/{dossierMedicalId}/rendez-vous', [DossierMedicalController::class, 'addRendezVous']);  // Ajouter un rendez-vous au dossier médical
+// # Routes pour la gestion des dossiers médicaux
+// Route::post('/patients/{patientId}/dossiers-medical', [DossierMedicalController::class, 'create']);  // Créer un nouveau dossier médical
+// Route::put('/dossiers-medicaux/{id}', [DossierMedicalController::class, 'update']);  // Mettre à jour un dossier médical existant
+// Route::post('/dossiers-medicaux/{dossierMedicalId}/rendez-vous', [DossierMedicalController::class, 'addRendezVous']);  // Ajouter un rendez-vous au dossier médical
 
 
 
-// route pour la connexion
-use App\Http\Controllers\AuthController;    
 
-Route::post('login', [AuthController::class, 'login']);
-Route::post('logout', [AuthController::class, 'logout']);
 
 
 use App\Http\Controllers\PasswordOublierController;
@@ -89,3 +85,30 @@ use App\Http\Controllers\PasswordOublierController;
 Route::post('forgot', [PasswordOublierController::class, 'sendResetLink']);
 Route::post('reset', [PasswordOublierController::class, 'resetPassword']);
 
+
+
+# Routes pour la gestion des constantes vitales
+Route::prefix('utilisateurs')->middleware('jwt.auth')->group(function () {
+
+Route::post('/patients/{patientId}/constantes-vitales', [ConstanteVitaleController::class, 'addConstanteForPatient']);  //ajouter constante-vitale à un patient
+Route::post('/dossiers-medicaux/{dossierMedicalId}/constantes-vitales', [ConstanteVitaleController::class, 'addconstanteForDossierMedical']); //ajouter constante-vitale à un dossier medical
+
+
+
+# Routes pour la gestion des dossiers médicaux
+Route::post('/patients/{patientId}/dossiers-medicaux', [DossierMedicalController::class, 'create']);  // Créer un nouveau dossier médical
+Route::put('/dossiers-medicaux/{id}', [DossierMedicalController::class, 'update']);  // Mettre à jour un dossier médical existant
+Route::get('/dossiers-medicaux/{id}', [DossierMedicalController::class, 'show']); // Afficher un dossier médical
+Route::post('/dossiers-medicaux/{dossierMedicalId}/constantes-vitales', [DossierMedicalController::class, 'addConstanteVitale']); // Ajouter des constantes vitales
+Route::post('/dossiers-medicaux/{dossierMedicalId}/rendez-vous', [DossierMedicalController::class, 'addRendezVous']);  // Ajouter un rendez-vous au dossier médical
+
+});
+
+
+
+
+use App\Http\Controllers\AuthController;
+# Routes pour le login
+Route::post('/login', [AuthController::class, 'login']);
+Route::post('/logout', [AuthController::class, 'logout']); // Déconnexion
+Route::post('/loginbycard', [AuthController::class, 'loginByCard']);
