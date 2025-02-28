@@ -14,64 +14,6 @@ use Tymon\JWTAuth\Contracts\JWTSubject;
 
 class UtilisateurController extends Controller
 {
-
-
-
-//connexion d'un utilisateur avec token email et mot de passe pour une base de donnees mongodb
-    public function login(Request $request)
-    {
-        try {
-            // Validation des données
-            $validator = Validator::make($request->all(), [
-                'email' => 'required|email',
-                'password' => 'required|string'
-            ], [
-                'required' => 'Le champ :attribute est obligatoire',
-                'email' => 'Le format de l\'email est invalide'
-            ]);
-
-            if ($validator->fails()) {
-                return response()->json([
-                    'status' => false,
-                    'message' => 'Erreur de validation',
-                    'errors' => $validator->errors()
-                ], 422);
-            }
-
-            // Récupération de l'utilisateur
-            $utilisateur = Utilisateur::where('email', $request->email)->first();
-
-            if (!$utilisateur || !Hash::check($request->password, $utilisateur->password)) {
-                return response()->json([
-                    'status' => false,
-                    'message' => 'Email ou mot de passe incorrect'
-                ], 401);
-            }
-
-            // Générer un token d'authentification
-            $token = $utilisateur->createToken('auth_token')->plainTextToken;
-
-            return response()->json([
-                'status' => true,
-                'message' => 'Connexion réussie',
-                'data' => [
-                    'utilisateur' => $utilisateur,
-                    'token' => $token
-                ]
-            ], 200);
-
-        } catch (\Exception $e) {
-            return response()->json([
-                'status' => false,
-                'message' => 'Une erreur est survenue lors de la connexion',
-                'error' => $e->getMessage()
-            ], 500);
-        }
-    }
-
-
-
-
     /**
      * Générer un matricule unique
      */
@@ -84,7 +26,6 @@ class UtilisateurController extends Controller
 
         return $matricule;
     }
-
 
 
 
@@ -390,17 +331,17 @@ public function destroyMultiple(Request $request)
 
     
     /**
+ * /**
  * Assigner une carte RFID à un utilisateur
  */
 public function assignerCarte(Request $request, $id)
 {
     // Validation des données
     $validator = Validator::make($request->all(), [
-        'codeRfid' => 'required|string|unique:utilisateurs,codeRfid',
+        'codeRfid' => 'required|string',
     ], [
         'codeRfid.required' => 'Le champ code RFID est obligatoire.',
         'codeRfid.string' => 'Le champ code RFID doit être une chaîne de caractères.',
-        'codeRfid.unique' => 'Cette carte RFID est déjà utilisée.',
     ]);
 
     if ($validator->fails()) {
@@ -409,6 +350,21 @@ public function assignerCarte(Request $request, $id)
             'message' => 'Erreur de validation',
             'errors' => $validator->errors()
         ], 422);
+    }
+
+    // Vérifier si la carte RFID existe déjà dans le système
+    $carteExistante = Utilisateur::where('codeRfid', $request->codeRfid)->first();
+    
+    if ($carteExistante) {
+        return response()->json([
+            'status' => false,
+            'message' => 'Cette carte RFID est déjà attribuée à un autre utilisateur',
+            'utilisateur' => [
+                'nom' => $carteExistante->nom,
+                'prenom' => $carteExistante->prenom,
+                'role' => $carteExistante->role
+            ]
+        ], 400);
     }
 
     // Récupérer l'utilisateur
@@ -425,7 +381,8 @@ public function assignerCarte(Request $request, $id)
     if ($utilisateur->codeRfid) {
         return response()->json([
             'status' => false,
-            'message' => 'Cet utilisateur a déjà une carte RFID attribuée'
+            'message' => 'Cet utilisateur a déjà une carte RFID attribuée',
+            'code_rfid_actuel' => $utilisateur->codeRfid
         ], 400);
     }
 
@@ -439,6 +396,5 @@ public function assignerCarte(Request $request, $id)
         'data' => $utilisateur
     ], 200);
 }
-
 
 }
