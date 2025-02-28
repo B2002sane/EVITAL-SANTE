@@ -16,59 +16,6 @@ class UtilisateurController extends Controller
 
 
 
-//connexion d'un utilisateur avec token email et mot de passe pour une base de donnees mongodb
-    public function login(Request $request)
-    {
-        try {
-            // Validation des données
-            $validator = Validator::make($request->all(), [
-                'email' => 'required|email',
-                'password' => 'required|string'
-            ], [
-                'required' => 'Le champ :attribute est obligatoire',
-                'email' => 'Le format de l\'email est invalide'
-            ]);
-
-            if ($validator->fails()) {
-                return response()->json([
-                    'status' => false,
-                    'message' => 'Erreur de validation',
-                    'errors' => $validator->errors()
-                ], 422);
-            }
-
-            // Récupération de l'utilisateur
-            $utilisateur = Utilisateur::where('email', $request->email)->first();
-
-            if (!$utilisateur || !Hash::check($request->password, $utilisateur->password)) {
-                return response()->json([
-                    'status' => false,
-                    'message' => 'Email ou mot de passe incorrect'
-                ], 401);
-            }
-
-            // Générer un token d'authentification
-            $token = $utilisateur->createToken('auth_token')->plainTextToken;
-
-            return response()->json([
-                'status' => true,
-                'message' => 'Connexion réussie',
-                'data' => [
-                    'utilisateur' => $utilisateur,
-                    'token' => $token
-                ]
-            ], 200);
-
-        } catch (\Exception $e) {
-            return response()->json([
-                'status' => false,
-                'message' => 'Une erreur est survenue lors de la connexion',
-                'error' => $e->getMessage()
-            ], 500);
-        }
-    }
-
-
 
 
     /**
@@ -332,4 +279,52 @@ class UtilisateurController extends Controller
             ], 500);
         }
     }
+
+
+
+
+
+
+        /**
+     * Supprimer plusieurs utilisateurs
+     */
+    public function destroyMultiple(Request $request)
+    {
+        try {
+            // Validation des données
+            $validator = Validator::make($request->all(), [
+                'ids' => 'required|array',
+                'ids.*' => 'exists:utilisateurs,id'
+            ], [
+                'required' => 'Le champ :attribute est obligatoire',
+                'exists' => 'Un ou plusieurs identifiants sont invalides'
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Erreur de validation',
+                    'errors' => $validator->errors()
+                ], 422);
+            }
+
+            // Suppression logique des utilisateurs
+            $ids = $request->input('ids');
+            $utilisateurs = Utilisateur::whereIn('id', $ids)->update(['archive' => true]);
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Utilisateurs supprimés avec succès',
+                'count' => $utilisateurs
+            ], 200);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Une erreur est survenue lors de la suppression des utilisateurs',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
 }

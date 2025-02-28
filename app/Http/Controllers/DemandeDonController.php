@@ -80,6 +80,8 @@ class DemandeDonController extends Controller
         return response()->json(['demandeDon' => $demandeDon]);
     }
 
+
+    
     /**
      * Mettre à jour une demande de don
      */
@@ -112,6 +114,9 @@ class DemandeDonController extends Controller
         return response()->json(['demandeDon' => $demandeDon]);
     }
 
+
+
+
     /**
      * Supprimer une demande de don
      */
@@ -134,6 +139,10 @@ class DemandeDonController extends Controller
         return response()->json(['message' => 'Demande de don supprimée avec succès']);
     }
 
+
+
+
+
     /**
      * Lister toutes les demandes de don disponibles pour les donneurs
      */
@@ -150,6 +159,10 @@ class DemandeDonController extends Controller
         $demandesDon = $query->get();
         return response()->json(['demandesDon' => $demandesDon]);
     }
+
+
+
+
 
     /**
      * Accepter une demande de don (pour les donneurs)
@@ -197,4 +210,40 @@ class DemandeDonController extends Controller
 
         return response()->json(['message' => 'Demande de don acceptée avec succès', 'demandeDon' => $demandeDon]);
     }
+
+
+
+
+
+
+    // Annuler une demande de don qui etait accepter par un donneur
+    public function annulerDemande($id)
+    {
+        $demandeDon = DemandeDon::find($id);
+
+        if (!$demandeDon) {
+            return response()->json(['message' => 'Demande de don non trouvée'], 404);
+        }
+
+        if ($demandeDon->status !== 'ACCEPTEE') {
+            return response()->json(['message' => 'Impossible d\'annuler une demande non acceptée'], 422);
+        }
+
+        $demandeDon->update([
+            'donneurId' => null,
+            'status' => 'EN_COURS'
+        ]);
+
+        return response()->json(['message' => 'Demande de don annulée avec succès', 'demandeDon' => $demandeDon]);
+    }
+
+
+
+
+
+
+
+
+
 }
+

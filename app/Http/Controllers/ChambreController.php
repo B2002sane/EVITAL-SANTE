@@ -295,7 +295,7 @@ class ChambreController extends Controller
 
         return response()->json([
             'chambre' => $chambre->numero,
-            'nombreTotal' => $chambre->nombreLits,
+            'nombreTotalLits' => $chambre->nombreLits,
             'litsOccupes' => $chambre->nombreLitsOccupes(),
             'litsDisponibles' => $chambre->nombreLitsDisponibles(),
             'disponible' => $chambre->disponible,

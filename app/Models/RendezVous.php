@@ -15,7 +15,8 @@ class RendezVous extends Model
         'medecinId',
         'date',
         'motif',
-        'status'
+        'status',
+        'creePar'
     ];
 
 

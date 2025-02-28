@@ -25,6 +25,11 @@ Route::prefix('utilisateurs')->group(function () {
     Route::delete('/{id}', [UtilisateurController::class, 'destroy']);
 });
 
+Route::post('/utilisateurs/destroy-multiple', [UtilisateurController::class, 'destroyMultiple']);
+
+
+
+
 
 #routes pour le gestion des rendez vous
 use App\Http\Controllers\RendezVousController;
@@ -32,6 +37,29 @@ use App\Http\Controllers\RendezVousController;
 Route::apiResource('rendez-vous', RendezVousController::class);
 Route::get('patient/{patientId}/rendez-vous', [RendezVousController::class, 'getPatientRendezVous']);
 Route::get('medecin/{medecinId}/rendez-vous', [RendezVousController::class, 'getMedecinRendezVous']);
+
+// Demande de rendez-vous par un patient
+Route::post('/rendez-vous/demander', [RendezVousController::class, 'demanderRendezVous']);
+
+// Récupérer les demandes en attente pour un médecin
+Route::get('/medecins/{medecinId}/demandes', [RendezVousController::class, 'getDemandesEnAttente']);
+
+// Accepter une demande de rendez-vous
+Route::patch('/rendez-vous/{id}/accepter', [RendezVousController::class, 'accepterDemande']);
+
+//demande de rendez vous en attente pour un medecin
+Route::get('/rendez-vous/attente/{medecinId}', [RendezVousController::class, 'getDemandesEnAttente']);
+
+// rendez vous creer par le  medecin
+Route::get('/rendez-vous/medecin/{medecinId}', [RendezVousController::class, 'getMedecinRendezVous']);
+
+Route::get('/rendez-vous/patient/{patientId}', [RendezVousController::class, 'getPatientRendezVous']);
+
+Route::get('/rendez-vous/date/{date}', [RendezVousController::class, 'indexByDate']);
+
+
+
+
 
 
 # routes pour les demandes de don
@@ -45,6 +73,7 @@ Route::delete('demandes-don/{id}', [DemandeDonController::class, 'destroy']);
 
 Route::get('demandes-don-disponibles/{groupeSanguin?}', [DemandeDonController::class, 'demandesDisponibles']);
 Route::post('demandes-don/{id}/accepter', [DemandeDonController::class, 'accepterDemande']);
+Route::post('demandes-don/{id}/annuler', [DemandeDonController::class, 'annulerDemande']);
 
 
 
@@ -58,6 +87,7 @@ Route::post('chambres/{id}/assigner-lit', [ChambreController::class, 'assignerLi
 Route::post('chambres/{id}/liberer-lit', [ChambreController::class, 'libererLit']);
 Route::get('chambres-disponibles', [ChambreController::class, 'chambresDisponibles']);
 Route::get('chambres/{id}/statut', [ChambreController::class, 'statutOccupation']);
+
 
 
 
