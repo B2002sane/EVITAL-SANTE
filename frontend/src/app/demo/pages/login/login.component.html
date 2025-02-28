@@ -1,0 +1,56 @@
+<div class="connexion-container">
+  <div class="connexion-card">
+    <div class="left-panel">
+      <div class="logo">
+        <img src="assets/images/e-vital clinik.png" alt="Evital-Clinik" class="logo" />
+      </div>
+      
+      <div class="login-form">
+        <h2>SE CONNECTER</h2>
+        <p class="subtitle">Espace Médecins - Accédez à vos services en toute sécurité</p>
+        
+        <form (ngSubmit)="onLogin()">
+          <div class="form-group">
+            <input
+              type="email"
+              placeholder="exemple@gmail.com"
+              [(ngModel)]="email"
+              name="email"
+              required
+            >
+          </div>
+          
+          <div class="form-group">
+            <input
+              [type]="showPassword ? 'text' : 'password'"
+              placeholder="Mot de passe"
+              [(ngModel)]="password"
+              name="password"
+              required
+            >
+            <span class="password-toggle" (click)="togglePasswordVisibility()">
+              {{ showPassword ? '👁️' : '👁️‍🗨️' }}
+            </span>
+          </div>
+          
+          <button type="submit" class="connexion-button" [disabled]="isLoading">
+            <span *ngIf="!isLoading">CONNEXION</span>
+            <span *ngIf="isLoading">Chargement...</span>
+          </button>
+        </form>
+        
+        <div *ngIf="errorMessage" class="error-message">
+          {{ errorMessage }}
+        </div>
+      <!--    
+        <p class="rfid-text">
+          Ou par carte RFID:  <a href="#" (click)="onRfidLogin($event)">Approchez votre carte au lecteur</a>
+        </p> -->
+      </div>
+    </div>
+    
+    <div class="right-panel">
+      <img src="assets/images/login.png" alt="Médecins" class="doctors-image" />
+    </div>
+  </div>
+</div>
