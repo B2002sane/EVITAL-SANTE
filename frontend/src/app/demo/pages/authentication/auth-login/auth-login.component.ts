@@ -269,7 +269,7 @@ export class AuthLoginComponent implements OnDestroy {
 
         // Rediriger en fonction du rôle de l'utilisateur
         if (response.user?.role === 'MEDECIN_CHEF' || response.user?.role === 'MEDECIN') {
-          this.router.navigate(['/dashboard']);
+          this.router.navigate(['/dashboard/default']);
         } else {
           this.router.navigate(['/donneur']);
         }
