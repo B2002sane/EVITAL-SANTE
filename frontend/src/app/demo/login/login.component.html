@@ -1,0 +1,81 @@
+<div class="connexion-container">
+  <div class="connexion-card">
+    <div class="left-panel">
+      <div class="logo">
+        <img src="logo.png" alt="Evital Klinik Logo">
+      </div>
+      
+      <div class="login-form">
+        <h2>SE CONNECTER</h2>
+        <p class="subtitle">Espace Médecins - Accédez à vos services en toute sécurité</p>
+        
+        <!-- Message d'alerte de blocage -->
+        <div *ngIf="isLocked" class="locked-account-warning">
+          <div class="lock-icon">🔒</div>
+          <p>Compte temporairement bloqué suite à trop de tentatives échouées.</p>
+          <p>Veuillez réessayer dans <span class="countdown">{{remainingTime}}</span> secondes.</p>
+        </div>
+        
+        <form (ngSubmit)="onLogin()">
+          <div class="form-group">
+            <input
+              type="email"
+              placeholder="exemple@gmail.com"
+              [(ngModel)]="email"
+              name="email"
+              (input)="validateEmail()"
+              required
+              [class.input-error]="emailError"
+              [disabled]="isLocked"
+            >
+            <div *ngIf="emailError" class="error-text">
+              {{ emailError }}
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <input
+              [type]="showPassword ? 'text' : 'password'"
+              placeholder="Mot de passe"
+              [(ngModel)]="password"
+              name="password"
+              (input)="validatePassword()"
+              required
+              [class.input-error]="passwordError"
+              [disabled]="isLocked"
+            >
+            <span class="password-toggle" (click)="togglePasswordVisibility()" *ngIf="!isLocked">
+              {{ showPassword ? '👁️' : '👁️‍🗨️' }}
+            </span>
+            <div *ngIf="passwordError" class="error-text">
+              {{ passwordError }}
+            </div>
+          </div>
+          
+          <div *ngIf="failedAttempts > 0 && failedAttempts < 3 && !isLocked" class="attempts-warning">
+            Attention: {{failedAttempts}}/3 tentatives échouées
+          </div>
+          
+          <button type="submit" class="connexion-button" [disabled]="isLoading || !isFormValid() || isLocked">
+            <span *ngIf="!isLoading">CONNEXION</span>
+            <span *ngIf="isLoading">
+              <div class="spinner"></div> Chargement...
+            </span>
+          </button>
+        </form>
+        
+        <div *ngIf="serverError" class="error-message">
+          {{ serverError }}
+        </div>
+        
+        <p class="rfid-text">
+          Ou par carte RFID: <a href="#" (click)="onRfidLogin($event)" [class.disabled]="isLocked">Approchez votre carte au lecteur</a>
+        </p>
+      </div>
+    </div>
+    
+    <div class="right-panel">
+      <img src="img_medecin.png" alt="Medical Dashboard Illustration">
+    </div>
+  </div>
+</div>

@@ -1,0 +1,284 @@
+.connexion-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: #E9F9F5;
+  font-family: 'Roboto', sans-serif;
+}
+
+.connexion-card {
+  background-color: white;
+  border-radius: 15px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 1400px;  /* largeur maximale */
+  height: 800px; /* hauteur maximale */
+  display: flex;
+}
+
+.left-panel {
+  flex: 1;
+  padding: 40px;
+  display: flex;
+  flex-direction: column;
+}
+
+.logo {
+  height: 90px;
+  margin-bottom: 80px;
+}
+
+.logo img {
+  height: 90px;
+}
+
+.login-form {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+h2 {
+  color: #016b5b;
+  font-size: 24px;
+  margin-bottom: 10px;
+  font-weight: 500;
+}
+
+.subtitle {
+  color: #666;
+  margin-bottom: 30px;
+  font-size: 14px;
+}
+
+.form-group {
+  position: relative;
+  margin-bottom: 20px;
+}
+
+input {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+  outline: none;
+  transition: all 0.3s;
+}
+
+/* Style pour les inputs en erreur */
+.input-error {
+  border-color: #f44336;
+}
+
+/* Style pour les inputs valides */
+.input-valid {
+  border-color: #4CAF50;
+}
+
+input:focus {
+  border-color: #016b5b;
+  box-shadow: 0 0 0 2px rgba(1, 107, 91, 0.1);
+}
+
+.password-toggle {
+  position: absolute;
+  right: 12px;
+  top: 12px;
+  cursor: pointer;
+  color: #999;
+}
+
+.connexion-button {
+  background-color: #016b5b;
+  color: white;
+  border: none;
+  padding: 14px;
+  border-radius: 4px;
+  font-weight: 500;
+  cursor: pointer;
+  margin-top: 10px;
+  transition: background-color 0.3s;
+}
+
+.connexion-button:hover {
+  background-color: #015a4d;
+}
+
+.connexion-button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.button-spinner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.rfid-text {
+  font-size: 12px;
+  color: #666;
+  text-align: center;
+  margin-top: 20px;
+}
+
+.right-panel {
+  flex: 1;
+  background-color: #e9f9f5;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 40px;
+}
+
+.right-panel img {
+  max-width: 100%;
+  max-height: 100%;
+}
+
+/* Style pour les messages d'erreur sous les inputs */
+.error-text {
+  color: #f44336;
+  font-size: 12px;
+  margin-top: 5px;
+  padding-left: 5px;
+  animation: fadeIn 0.3s;
+}
+
+.error-message {
+  color: #f44336;
+  text-align: center;
+  margin-top: 10px;
+  font-size: 14px;
+  padding: 8px;
+  background-color: rgba(244, 67, 54, 0.1);
+  border-radius: 4px;
+  animation: fadeIn 0.3s;
+}
+
+/* Styles pour la vérification d'email */
+.input-status {
+  min-height: 20px;
+  margin-top: 5px;
+}
+
+.checking-email {
+  color: #FF9800;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  padding-left: 5px;
+}
+
+.email-valid {
+  color: #4CAF50;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  padding-left: 5px;
+}
+
+.valid-icon {
+  margin-right: 5px;
+  font-weight: bold;
+}
+
+/* Style pour le spinner de chargement */
+.spinner {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border: 2px solid rgba(0, 0, 0, 0.1);
+  border-radius: 50%;
+  border-top-color: #016b5b;
+  animation: spin 1s linear infinite;
+  margin-right: 5px;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+/* Style pour la vérification des identifiants */
+.checking-credentials {
+  color: #FF9800;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  padding-left: 5px;
+  margin-bottom: 10px;
+}
+
+/* Style pour mettre en évidence le champ avec une erreur serveur */
+.input-error {
+  border-color: #f44336 !important;
+  background-color: rgba(244, 67, 54, 0.05);
+}
+
+/* Styles existants... */
+
+/* Styles pour le blocage de compte */
+.locked-account-warning {
+  background-color: #ffecb3;
+  border-left: 4px solid #ffc107;
+  padding: 15px;
+  margin-bottom: 20px;
+  border-radius: 4px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  animation: pulse 1.5s infinite alternate;
+}
+
+.lock-icon {
+  font-size: 24px;
+  margin-bottom: 10px;
+}
+
+.countdown {
+  font-weight: bold;
+  color: #d32f2f;
+}
+
+.attempts-warning {
+  color: #e65100;
+  font-size: 12px;
+  margin-bottom: 10px;
+  padding: 5px;
+  background-color: #fff3e0;
+  border-radius: 4px;
+  text-align: center;
+}
+
+/* Style pour les liens désactivés */
+a.disabled {
+  pointer-events: none;
+  color: #ccc;
+  text-decoration: none;
+  cursor: not-allowed;
+}
+
+/* Animation pulse pour le message de blocage */
+@keyframes pulse {
+  from {
+    background-color: #ffecb3;
+  }
+  to {
+    background-color: #ffe082;
+  }
+}
+
+/* Styliser les entrées désactivées */
+input:disabled {
+  background-color: #f5f5f5;
+  cursor: not-allowed;
+  color: #999;
+}

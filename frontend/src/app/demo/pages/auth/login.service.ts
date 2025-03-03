@@ -1,15 +1,25 @@
-// auth/login.service.ts
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { Observable, throwError, BehaviorSubject } from 'rxjs';
-import { catchError, tap } from 'rxjs/operators';
+import { Observable, throwError, BehaviorSubject, of } from 'rxjs';
+import { catchError, tap, map, switchMap } from 'rxjs/operators';
+import { io, Socket } from 'socket.io-client';
 
+
+
+  // Gestion du succès d'authentification
+  interface User {
+    id: number;
+    nom: string;
+    prenom: string;
+    role: string;
+  }
 @Injectable({
   providedIn: 'root'
 })
 export class LoginService {
   private apiUrl = 'http://localhost:8000/api'; // Remplacez par l'URL de votre API
-  
+  public socket: Socket;
+
   private currentUserSubject = new BehaviorSubject<{
     id: number;
     nom: string;
@@ -25,10 +35,60 @@ export class LoginService {
     if (storedUser) {
       this.currentUserSubject.next(JSON.parse(storedUser));
     }
+
+    // Initialiser la connexion Socket.IO
+    this.socket = io('http://localhost:5000');
+    this.listenForRfidEvents();
   }
 
-  // Connexion avec email et mot de passe
-  login(email: string, password: string): Observable<{
+  // Écouter les événements RFID
+  private listenForRfidEvents() {
+    this.socket.on('card_uid', (uid: string) => {
+      console.log('UID reçu:', uid);
+      // Nous ne faisons rien ici, le composant de login écoutera également cet événement
+    });
+  }
+
+  // Vérifier si l'email existe dans la base de données
+  checkEmailExists(email: string): Observable<boolean> {
+    if (!email || email.trim() === '') {
+      return of(false);
+    }
+
+    return this.http.post<{ exists: boolean }>(`${this.apiUrl}/check-email`, { email })
+      .pipe(
+        map(response => response.exists),
+        catchError(error => {
+          console.error('Erreur lors de la vérification de l\'email:', error);
+          return of(false);
+        })
+      );
+  }
+
+// Connexion avec email et mot de passe
+login(email: string, password: string): Observable<{
+  message: string;
+  token: string;
+  user?: User; // Rendre 'user' optionnel si l'API ne le retourne pas toujours
+  status?: boolean;
+  //data?: any;
+}> {
+  return this.http.post<{
+    message: string;
+    token: string;
+    user?: User; // Assurez-vous que 'user' est optionnel ici aussi
+    status?: boolean;
+    //data?: any;
+  }>(`${this.apiUrl}/login`, { email, password })
+    .pipe(
+      tap(response => this.handleAuthSuccess(response)),
+      catchError(this.handleError)
+    );
+}
+
+
+  // Connexion avec carte RFID
+  loginbycard(codeRfid: string): Observable<{
     message: string;
     token: string;
     user?: {
@@ -36,7 +96,7 @@ export class LoginService {
       nom: string;
       prenom: string;
       role: string;
-    };
+    }
   }> {
     return this.http.post<{
       message: string;
@@ -46,27 +106,8 @@ export class LoginService {
         nom: string;
         prenom: string;
         role: string;
-      };
-    }>(`${this.apiUrl}/login`, { email, password })
-      .pipe(
-        tap(response => this.handleAuthSuccess(response)),
-        catchError(this.handleError)
-      );
-  }
-
-  // Connexion avec carte RFID
-  loginbycard(codeRfid: string): Observable<{
-    message: string;
-    token: string;
-    status?: boolean;
-    data?: any;
-  }> {
-    return this.http.post<{
-      message: string;
-      token: string;
-      status?: boolean;
-      data?: any;
-    }>(`${this.apiUrl}/login-by-card`, { codeRfid })
+      }
+    }>(`${this.apiUrl}/loginbycard`, { codeRfid })
       .pipe(
         tap(response => this.handleAuthSuccess(response)),
         catchError(this.handleError)
@@ -78,7 +119,6 @@ export class LoginService {
     status: boolean;
     message: string;
   }> {
-    // Ajout du token d'authentification dans les headers
     const headers = {
       'Authorization': `Bearer ${this.getToken()}`
     };
@@ -89,7 +129,6 @@ export class LoginService {
     }>(`${this.apiUrl}/logout`, {}, { headers })
       .pipe(
         tap(() => {
-          // Supprimer les informations de l'utilisateur du stockage local
           localStorage.removeItem(this.tokenKey);
           localStorage.removeItem('current_user');
           this.currentUserSubject.next(null);
@@ -118,18 +157,17 @@ export class LoginService {
     return localStorage.getItem(this.tokenKey);
   }
 
+
+  
   // Gestion du succès d'authentification
   private handleAuthSuccess(response: {
     message: string;
     token: string;
-    user?: any;
-    data?: any;
+    user?: User;
+    data?: User;
   }): void {
     if (response.token) {
-      // Sauvegarder le token dans le stockage local
       localStorage.setItem(this.tokenKey, response.token);
-      
-      // Sauvegarder les informations de l'utilisateur
       const user = response.user || response.data;
       if (user) {
         localStorage.setItem('current_user', JSON.stringify(user));
@@ -137,21 +175,60 @@ export class LoginService {
       }
     }
   }
+  
+
+  // Connexion avec vérification de l'email
+  loginWithEmailCheck(email: string, password: string): Observable<{
+    message: string;
+    token: string;
+    user?: {
+      id: number;
+      nom: string;
+      prenom: string;
+      role: string;
+    };
+  }> {
+    return this.checkEmailExists(email).pipe(
+      switchMap(exists => {
+        if (!exists) {
+          return throwError(() => ({
+            status: 401,
+            error: {
+              code: 'USER_NOT_FOUND',
+              message: 'Cet email n\'existe pas dans notre système.'
+            }
+          }));
+        }
+        return this.login(email, password);
+      })
+    );
+  }
 
   // Gestion des erreurs
   private handleError(error: HttpErrorResponse) {
     let errorMessage = 'Une erreur est survenue lors de la connexion';
-    
+    let errorCode = '';
+
     if (error.error instanceof ErrorEvent) {
-      // Erreur côté client
       errorMessage = `Erreur: ${error.error.message}`;
     } else {
-      // Erreur côté serveur
       if (error.error && error.error.message) {
         errorMessage = error.error.message;
       }
+
+      if (error.status === 401) {
+        if (error.error && error.error.code) {
+          errorCode = error.error.code;
+        } else {
+          errorCode = 'INVALID_CREDENTIALS';
+        }
+      }
     }
-    
-    return throwError(() => new Error(errorMessage));
+
+    return throwError(() => ({
+      message: errorMessage,
+      code: errorCode,
+      status: error.status
+    }));
   }
 }

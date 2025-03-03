@@ -5,7 +5,6 @@ import { RouterModule, Routes } from '@angular/router';
 // Project import
 import { AdminComponent } from './theme/layouts/admin-layout/admin-layout.component';
 import { GuestLayoutComponent } from './theme/layouts/guest-layout/guest-layout.component';
-//import { LoginComponent } from './demo/pages/login/login.component';
 
 const routes: Routes = [
   {
@@ -41,7 +40,7 @@ const routes: Routes = [
     children: [
       {
         path: 'login',
-        loadComponent: () => import('./demo/pages/login/login.component').then((c) => c.LoginComponent)
+        loadComponent: () => import('./demo/pages/authentication/auth-login/auth-login.component').then((c) => c.AuthLoginComponent)
       },
       {
         path: 'register',

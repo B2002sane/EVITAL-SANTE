@@ -1,21 +1,21 @@
 import { Component, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Router, RouterModule } from '@angular/router';
-import { HttpClientModule } from '@angular/common/http';
+import { Router } from '@angular/router';
+import { LoginService } from '../../auth/login.service';
+import { HttpClientModule, HttpErrorResponse } from '@angular/common/http';
 import { interval, Subscription } from 'rxjs';
 import { take } from 'rxjs/operators';
-import { LoginService } from '../../auth/login.service';
 
 @Component({
-  selector: 'app-auth-login',
+  selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, FormsModule, HttpClientModule, RouterModule],
-  templateUrl: './auth-login.component.html',
-  styleUrls: ['./auth-login.component.scss'],
+  imports: [CommonModule, FormsModule, HttpClientModule],
+  templateUrl: './login.component.html',
+  styleUrls: ['./login.component.css'],
   providers: [LoginService],
 })
-export class AuthLoginComponent implements OnDestroy {
+export class LoginComponent implements OnDestroy {
   email: string = '';
   password: string = '';
   emailError: string = '';
@@ -71,9 +71,9 @@ export class AuthLoginComponent implements OnDestroy {
         this.emailError = '';
         this.passwordError = '';
         
-        // Rediriger en fonction du rôle de l'utilisateur
+        // Rediriger vers le tableau de bord ou la page appropriée selon le rôle
         if (response.user?.role === 'MEDECIN_CHEF' || response.user?.role === 'MEDECIN') {
-          this.router.navigate(['/gestion-chambre']); // Redirection vers gestion-chambre
+          this.router.navigate(['/dashboard/default']);
         } else {
           this.router.navigate(['/donneur']);
         }
@@ -274,7 +274,7 @@ export class AuthLoginComponent implements OnDestroy {
           this.router.navigate(['/donneur']);
         }
       },
-      error: (error) => {
+      error: (error: HttpErrorResponse) => {
         this.isLoading = false;
 
         // Incrémenter le compteur de tentatives échouées
@@ -292,7 +292,7 @@ export class AuthLoginComponent implements OnDestroy {
         } else if (error.status === 0) {
           this.serverError = 'Impossible de se connecter au serveur. Vérifiez votre connexion Internet.';
         } else {
-          this.serverError = error.message || 'Une erreur est survenue lors de la connexion';
+          this.serverError = error.error.message || 'Une erreur est survenue lors de la connexion';
         }
       }
     });
@@ -300,7 +300,7 @@ export class AuthLoginComponent implements OnDestroy {
 
   // Méthode pour gérer la connexion par RFID
   onRfidLogin(event: Event) {
-    event.preventDefault(); // Empêcher le comportement par défaut du bouton
+    event.preventDefault(); // Empêcher le comportement par défaut du lien
 
     // Si le compte est bloqué, ne pas continuer
     if (this.isLocked) {
