@@ -56,7 +56,12 @@ const routes: Routes = [
         path: 'edit/personnel:id',
         loadComponent: () =>
           import('./demo/others/ajout-personnel/ajout-personnel.component').then((c) => c.AjoutPersonnelComponent)
-      }
+      },
+
+      {
+        path: 'gestion-chambre',
+        loadComponent: () => import ('./demo/gestion-chambre/gestion-chambre.component').then((c) => c.GestionChambreComponent)
+      },
     ]
   },
   {
@@ -80,7 +85,9 @@ const routes: Routes = [
       {
         path: 'login-donneur',
         loadComponent: () => import('./demo/pages/authentication/login-donneur/login-donneur.component').then((c) => c.LoginDonneurComponent)
-      }
+      },
+
+     
       
     ]
   }
