@@ -1,0 +1,260 @@
+/* Styles de base pour le conteneur de connexion */
+.login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: #F5F7FA;
+  font-family: 'Roboto', sans-serif;
+}
+
+.login-card {
+  background-color: white;
+  border-radius: 20px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 1200px;
+  height: 700px;
+  display: flex;
+  overflow: hidden;
+}
+
+/* Partie gauche - Formulaire */
+.login-form-container {
+  flex: 1;
+  padding: 40px;
+  display: flex;
+  flex-direction: column;
+}
+
+.logo-container {
+  margin-bottom: 40px;
+}
+
+.logo {
+  height: 80px;
+}
+
+.header-text {
+  margin-bottom: 30px;
+}
+
+.title {
+  color: #016b5b;
+  font-size: 24px;
+  margin-bottom: 10px;
+  font-weight: 600;
+}
+
+.subtitle {
+  color: #666;
+  font-size: 14px;
+}
+
+/* Styles pour le formulaire */
+form {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.form-group {
+  margin-bottom: 20px;
+  position: relative;
+}
+
+.input-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.form-input {
+  width: 100%;
+  padding: 15px 40px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 14px;
+  transition: all 0.3s;
+}
+
+.form-input:focus {
+  border-color: #016b5b;
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(1, 107, 91, 0.1);
+}
+
+.form-input:disabled {
+  background-color: #f5f5f5;
+  cursor: not-allowed;
+  color: #999;
+}
+
+.input-icon-left,
+.input-icon-right {
+  position: absolute;
+  color: #777;
+}
+
+.input-icon-left {
+  left: 12px;
+}
+
+.input-icon-right {
+  right: 12px;
+  cursor: pointer;
+}
+
+.forgot-password {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 20px;
+}
+
+.forgot-password-link {
+  color: #016b5b;
+  font-size: 12px;
+  text-decoration: none;
+}
+
+.forgot-password-link.disabled {
+  color: #ccc;
+  pointer-events: none;
+  cursor: not-allowed;
+}
+
+.btn-submit,
+.btn-rfid {
+  background-color: #016b5b;
+  color: white;
+  border: none;
+  padding: 15px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.btn-submit:hover,
+.btn-rfid:hover {
+  background-color: #015a4d;
+}
+
+.btn-submit:disabled,
+.btn-rfid:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.btn-rfid {
+  background-color: #f0f0f0;
+  color: #333;
+  margin-top: 15px;
+}
+
+.btn-rfid:hover {
+  background-color: #e0e0e0;
+}
+
+/* Partie droite - Image */
+.image-container {
+  flex: 1;
+  background-color: #e9f9f5;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 40px;
+}
+
+.image-wrapper {
+  position: relative;
+  max-width: 100%;
+  max-height: 100%;
+}
+
+.image-border {
+  position: relative;
+  padding: 10px;
+  border-radius: 15px;
+  background-color: white;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+}
+
+.doctors-image {
+  max-width: 100%;
+  max-height: 500px;
+  border-radius: 10px;
+}
+
+.decoration-plus {
+  position: absolute;
+  font-size: 24px;
+  color: #016b5b;
+  font-weight: bold;
+}
+
+.top-right {
+  top: -10px;
+  right: -10px;
+}
+
+.top-left {
+  top: -10px;
+  left: -10px;
+}
+
+.bottom-right {
+  bottom: -10px;
+  right: -10px;
+}
+
+/* Styles pour les erreurs et alertes */
+.error-text {
+  color: #f44336;
+  font-size: 12px;
+  margin-top: 5px;
+  padding-left: 5px;
+  animation: fadeIn 0.3s;
+}
+
+.error-message {
+  color: #f44336;
+  text-align: center;
+  margin: 15px 0;
+  font-size: 14px;
+  padding: 10px;
+  background-color: rgba(244, 67, 54, 0.1);
+  border-radius: 8px;
+  animation: fadeIn 0.3s;
+}
+
+.input-error {
+  border-color: #f44336 !important;
+  background-color: rgba(244, 67, 54, 0.03);
+}
+
+/* Styles pour le blocage de compte */
+.locked-account-warning {
+  background-color: #ffecb3;
+  border-left: 4px solid #ffc107;
+  padding: 15px;
+  margin-bottom: 20px;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  animation: pulse 1.5s infinite alternate;
+}
+
+.lock-icon {
+  font-size: 24px;
+  margin-bottom: 10px;
+}
+
+.countdown {
+  font-weight: bold;
+  color: #d32f2f
+}
