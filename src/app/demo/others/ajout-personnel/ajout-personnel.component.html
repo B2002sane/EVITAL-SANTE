@@ -1,0 +1,198 @@
+<div class="personnel-form-container">
+    <div class="row">
+      <div class="col-sm-12">
+        <app-card cardClass="personnel-form-card" [cardTitle]="pageTitle">
+          <form [formGroup]="personnelForm" (ngSubmit)="onSubmit()">
+            
+            <!-- En-tête avec photo de profil -->
+            <div class="profile-header">
+              <div class="profile-photo-container">
+                <div class="profile-photo" [class.has-photo]="photoPreview">
+                  <img *ngIf="photoPreview" [src]="photoPreview" alt="Photo de profil">
+                  <i *ngIf="!photoPreview" class="bi bi-person"></i>
+                  
+                  <div class="photo-actions">
+                    <label for="photo-upload" class="photo-upload-btn">
+                      <i class="bi bi-camera"></i>
+                    </label>
+                    <button type="button" *ngIf="photoPreview" class="photo-remove-btn" (click)="removePhoto()">
+                      <i class="bi bi-x"></i>
+                    </button>
+                  </div>
+                </div>
+                <input 
+                  id="photo-upload" 
+                  type="file" 
+                  hidden 
+                  accept="image/*" 
+                  (change)="onPhotoChange($event)">
+              </div>
+              <div class="profile-title">
+                <h3>Informations du profil</h3>
+                <p>Veuillez remplir tous les champs obligatoires (*)</p>
+              </div>
+            </div>
+            
+            <!-- Informations personnelles -->
+            <div class="form-section">
+              <h4 class="section-title">Informations personnelles</h4>
+              
+              <div class="row">
+                <div class="form-group col-md-6">
+                  <label for="nom">Nom <span class="required">*</span></label>
+                  <input 
+                    type="text" 
+                    id="nom" 
+                    formControlName="nom" 
+                    placeholder="Nom"
+                    [class.is-invalid]="f['nom'].touched && f['nom'].invalid">
+                  <div *ngIf="f['nom'].touched && f['nom'].invalid" class="error-message">
+                    <span *ngIf="f['nom'].errors?.['required']">Le nom est requis</span>
+                    <span *ngIf="f['nom'].errors?.['minlength']">Le nom doit contenir au moins 2 caractères</span>
+                  </div>
+                </div>
+                
+                <div class="form-group col-md-6">
+                  <label for="prenom">Prénom <span class="required">*</span></label>
+                  <input 
+                    type="text" 
+                    id="prenom" 
+                    formControlName="prenom" 
+                    placeholder="Prénom"
+                    [class.is-invalid]="f['prenom'].touched && f['prenom'].invalid">
+                  <div *ngIf="f['prenom'].touched && f['prenom'].invalid" class="error-message">
+                    <span *ngIf="f['prenom'].errors?.['required']">Le prénom est requis</span>
+                    <span *ngIf="f['prenom'].errors?.['minlength']">Le prénom doit contenir au moins 2 caractères</span>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="row">
+                <div class="form-group col-md-6">
+                  <label for="genre">Genre <span class="required">*</span></label>
+                  <select 
+                    id="genre" 
+                    formControlName="genre"
+                    [class.is-invalid]="f['genre'].touched && f['genre'].invalid">
+                    <option value="">Sélectionner</option>
+                    <option value="HOMME">Homme</option>
+                    <option value="FEMME">Femme</option>
+                  </select>
+                  <div *ngIf="f['genre'].touched && f['genre'].invalid" class="error-message">
+                    <span *ngIf="f['genre'].errors?.['required']">Le genre est requis</span>
+                  </div>
+                </div>
+                
+                <div class="form-group col-md-6">
+                  <label for="adresse">Adresse <span class="required">*</span></label>
+                  <input 
+                    type="text" 
+                    id="adresse" 
+                    formControlName="adresse" 
+                    placeholder="Adresse"
+                    [class.is-invalid]="f['adresse'].touched && f['adresse'].invalid">
+                  <div *ngIf="f['adresse'].touched && f['adresse'].invalid" class="error-message">
+                    <span *ngIf="f['adresse'].errors?.['required']">L'adresse est requise</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Informations professionnelles -->
+            <div class="form-section">
+              <h4 class="section-title">Informations professionnelles</h4>
+              
+              <div class="row">
+                <div class="form-group col-md-6">
+                  <label for="role">Fonction <span class="required">*</span></label>
+                  <select 
+                    id="role" 
+                    formControlName="role"
+                    [class.is-invalid]="f['role'].touched && f['role'].invalid">
+                    <option value="">Sélectionner</option>
+                    <option value="MEDECIN">Médecin</option>
+                    <option value="INFIRMIER">Infirmier(e)</option>
+                    <option value="SAGE_FEMME">Sage Femme</option>
+                  </select>
+                  <div *ngIf="f['role'].touched && f['role'].invalid" class="error-message">
+                    <span *ngIf="f['role'].errors?.['required']">La fonction est requise</span>
+                  </div>
+                </div>
+
+
+                <div class="form-group col-md-3">
+                  <label for="password">
+                    Mot de passe 
+                    <span class="required" *ngIf="!isEditMode">*</span>
+                    <span class="optional" *ngIf="isEditMode">(optionnel en mode édition)</span>
+                  </label>
+                  <input 
+                    type="password" 
+                    id="password" 
+                    formControlName="password" 
+                    placeholder="Mot de passe"
+                    [class.is-invalid]="f['password'].touched && f['password'].invalid">
+                  <div *ngIf="f['password'].touched && f['password'].invalid" class="error-message">
+                    <span *ngIf="f['password'].errors?.['required']">Le mot de passe est requis</span>
+                    <span *ngIf="f['password'].errors?.['minlength']">Le mot de passe doit contenir au moins 6 caractères</span>
+                  </div>
+                </div>
+
+
+                
+                <div class="form-group col-md-3">
+                  <label for="code rfid">Code Rfid</label>
+                  <input 
+                    type="text" 
+                    id="categorie" 
+                    formControlName="codeRfid" 
+                    placeholder="Code Rfid">
+                </div>
+              </div>
+            </div>
+            
+            <!-- Informations de contact -->
+            <div class="form-section">
+              <h4 class="section-title">Informations de contact</h4>
+              
+              <div class="row">
+                <div class="form-group col-md-6">
+                  <label for="email">Email <span class="required">*</span></label>
+                  <input 
+                    type="email" 
+                    id="email" 
+                    formControlName="email" 
+                    placeholder="Email"
+                    [class.is-invalid]="f['email'].touched && f['email'].invalid">
+                  <div *ngIf="f['email'].touched && f['email'].invalid" class="error-message">
+                    <span *ngIf="f['email'].errors?.['required']">L'email est requis</span>
+                    <span *ngIf="f['email'].errors?.['email']">Format d'email invalide</span>
+                  </div>
+                </div>
+                
+                <div class="form-group col-md-6">
+                  <label for="telephone">Téléphone <span class="required">*</span></label>
+                  <input 
+                    type="tel" 
+                    id="telephone" 
+                    formControlName="telephone" 
+                    placeholder="Téléphone"
+                    [class.is-invalid]="f['telephone'].touched && f['telephone'].invalid">
+                  <div *ngIf="f['telephone'].touched && f['telephone'].invalid" class="error-message">
+                    <span *ngIf="f['telephone'].errors?.['required']">Le numéro de téléphone est requis</span>
+                    <span *ngIf="f['telephone'].errors?.['pattern']">Format invalide (9 chiffres requis)</span>
+                  </div>
+                </div>
+              </div>
+            </div>    
+            <!-- Boutons d'action -->
+            <div class="form-actions">
+              <button type="button" class="btn-cancel" (click)="onCancel()">ANNULER</button>
+              <button type="submit" class="btn-submit" [disabled]="personnelForm.invalid">{{ buttonText }}</button>
+            </div>
+            
+          </form>
+        </app-card>
+      </div>
+    </div>
+  </div>

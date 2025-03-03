@@ -1,0 +1,89 @@
+<div class="row">
+  <div id="card" class="d-flex align-items-center">
+    <div class="profile-container">
+      <img src="assets/images/user/avatar-2.jpg" alt="Photo de profil">
+    </div>
+    <h4 id="msg">Bienvenue, Dr. Touré<br>Passe une bonne journée de travail</h4>
+  </div>
+ 
+ 
+    <div  class="col-md-6 col-xl-3">
+      <app-card  [showHeader]="false" blockClass="dashboard-card">
+        <h3 class="mb-2 f-w-400 text-muted">Medecin</h3>
+        <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" style="color: rgb(228, 143, 32);" fill="currentColor" class="bi bi-person-square" viewBox="0 0 16 16">
+          <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0"/>
+          <path d="M2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2zm12 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1v-1c0-1-1-4-6-4s-6 3-6 4v1a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1z"/>
+        </svg>
+        <h4 class="mb-3">
+
+        </h4> 
+        <p class="mb-0 text-muted text-sm">
+         5 Medecins
+        </p>
+      </app-card>
+    </div>
+
+
+    <div  class="col-md-6 col-xl-3">
+      <app-card  [showHeader]="false" blockClass="dashboard-card">
+        <h3 class="mb-2 f-w-400 text-muted">Patient</h3>
+        <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" style="color:rgb(13, 116, 44);" class="bi bi-person-wheelchair" viewBox="0 0 16 16">
+          <path d="M12 3a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3m-.663 2.146a1.5 1.5 0 0 0-.47-2.115l-2.5-1.508a1.5 1.5 0 0 0-1.676.086l-2.329 1.75a.866.866 0 0 0 1.051 1.375L7.361 3.37l.922.71-2.038 2.445A4.73 4.73 0 0 0 2.628 7.67l1.064 1.065a3.25 3.25 0 0 1 4.574 4.574l1.064 1.063a4.73 4.73 0 0 0 1.09-3.998l1.043-.292-.187 2.991a.872.872 0 1 0 1.741.098l.206-4.121A1 1 0 0 0 12.224 8h-2.79zM3.023 9.48a3.25 3.25 0 0 0 4.496 4.496l1.077 1.077a4.75 4.75 0 0 1-6.65-6.65z"/>
+        </svg>
+        <h4 class="mb-3">
+        
+         
+        </h4>
+        <p class="mb-0 text-muted text-sm">
+         30 Patients
+        </p>
+      </app-card>
+    </div>
+
+
+    <div  class="col-md-6 col-xl-3">
+      <app-card  [showHeader]="false" blockClass="dashboard-card">
+        <h3 class="mb-2 f-w-400 text-muted">Infirmiers</h3>
+        <svg xmlns="http://www.w3.org/2000/svg"    width="30" height="30" fill="currentColor" style="color:rgb(63, 63, 179);"   viewBox="0 0 448 512">
+          <path d="M224 256A128 128 0 1 0 224 0a128 128 0 1 0 0 256zm-96 55.2C54 332.9 0 401.3 0 482.3C0 498.7 13.3 512 29.7 512l388.6 0c16.4 0 29.7-13.3 29.7-29.7c0-81-54-149.4-128-171.1l0 50.8c27.6 7.1 48 32.2 48 62l0 40c0 8.8-7.2 16-16 16l-16 0c-8.8 0-16-7.2-16-16s7.2-16 16-16l0-24c0-17.7-14.3-32-32-32s-32 14.3-32 32l0 24c8.8 0 16 7.2 16 16s-7.2 16-16 16l-16 0c-8.8 0-16-7.2-16-16l0-40c0-29.8 20.4-54.9 48-62l0-57.1c-6-.6-12.1-.9-18.3-.9l-91.4 0c-6.2 0-12.3 .3-18.3 .9l0 65.4c23.1 6.9 40 28.3 40 53.7c0 30.9-25.1 56-56 56s-56-25.1-56-56c0-25.4 16.9-46.8 40-53.7l0-59.1zM144 448a24 24 0 1 0 0-48 24 24 0 1 0 0 48z"/></svg>
+
+        <h4 class="mb-3">
+        
+         
+        </h4>
+        <p class="mb-0 text-muted text-sm">
+        10 Infirmiers
+        </p>
+      </app-card>
+    </div>
+
+
+
+    <div  class="col-md-6 col-xl-3">
+      <app-card  [showHeader]="false" blockClass="dashboard-card">
+        <h3 class="mb-2 f-w-400 text-muted">chambres</h3>
+        <svg xmlns="http://www.w3.org/2000/svg"     width="30" height="30" fill="currentColor" style="color:rgb(11, 153, 196);"    viewBox="0 0 512 512">
+          <path d="M271.9 4.2c-9.8-5.6-21.9-5.6-31.8 0l-224 128C6.2 137.9 0 148.5 0 160L0 480c0 17.7 14.3 32 32 32s32-14.3 32-32l0-301.4L256 68.9 448 178.6 448 480c0 17.7 14.3 32 32 32s32-14.3 32-32l0-320c0-11.5-6.2-22.1-16.1-27.8l-224-128zM256 208a40 40 0 1 0 0-80 40 40 0 1 0 0 80zm-8 280l0-88 16 0 0 88c0 13.3 10.7 24 24 24s24-10.7 24-24l0-174.5 26.9 49.9c6.3 11.7 20.8 16 32.5 9.8s16-20.8 9.8-32.5l-37.9-70.3c-15.3-28.5-45.1-46.3-77.5-46.3l-19.5 0c-32.4 0-62.1 17.8-77.5 46.3l-37.9 70.3c-6.3 11.7-1.9 26.2 9.8 32.5s26.2 1.9 32.5-9.8L200 313.5 200 488c0 13.3 10.7 24 24 24s24-10.7 24-24z"/></svg>
+
+        <h4 class="mb-3">
+        
+         
+        </h4>
+        <p class="mb-0 text-muted text-sm">
+         20 Chambres
+        </p>
+      </app-card>
+    </div>
+
+
+  
+  <div class="col-md-12 col-xl-8">
+    <app-monthly-bar-chart />
+  </div>
+  <div class="col-md-12 col-xl-4">
+    <app-income-overview-chart />
+  </div>
+
+ 
+  <!-- [ sample-page ] end -->
+</div>

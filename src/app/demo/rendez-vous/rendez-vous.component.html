@@ -1,0 +1,100 @@
+<!-- rendez-vous.component.html -->
+<div class="rendez-vous-container">
+    <header class="header">
+      <h1>Gestion des rendez vous</h1>
+      <button class="btn-attente" (click)="filterByStatus('en_attente')">Demandes en Attente</button>
+    </header>
+  
+    <div class="filters">
+      <div class="date-filter">
+        <input 
+          type="date" 
+          [(ngModel)]="dateFilter" 
+          (change)="filterByDate()" 
+          placeholder="Date"
+        />
+        <button class="search-btn" (click)="filterByDate()">
+          <i class="fa fa-search"></i>
+        </button>
+      </div>
+  
+      <div class="status-filter">
+        <select [(ngModel)]="statusFilter" (change)="applyFilters()">
+          <option value="">Tous les statuts</option>
+          <option value="en_attente">En attente</option>
+          <option value="confirme">Confirmé</option>
+          <option value="annule">Annulé</option>
+          <option value="termine">Terminé</option>
+        </select>
+        <div class="view-selector">
+          <select [(ngModel)]="viewMode" (change)="applyFilters()">
+            <option value="jour">Jour</option>
+            <option value="semaine">Semaine</option>
+            <option value="mois">Mois</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  
+    <div class="rendez-vous-grid">
+      <div class="rendez-vous-card" *ngFor="let rdv of filteredRendezVous">
+        <div class="card-header">
+          <h3>RENDEZ VOUS</h3>
+          <p>Consultation</p>
+        </div>
+        
+        <div class="card-content">
+          <div class="patient-info">
+            <i class="fa fa-user"></i>
+            <span>{{ rdv.patientNom }} {{ rdv.patientPrenom }}</span>
+          </div>
+          
+          <div class="date-info">
+            <i class="fa fa-calendar"></i>
+            <span>{{ rdv.date | date:'dd/MM/yyyy' }}</span>
+          </div>
+          
+          <div class="time-info">
+            <i class="fa fa-clock"></i>
+            <span>{{ rdv.date | date:'HH:mm' }}</span>
+          </div>
+  
+          <div class="motif-info">
+            <span><strong>Motif:</strong> {{ rdv.motif }}</span>
+          </div>
+  
+          <div class="medecin-info">
+            <span><strong>Médecin:</strong> {{ rdv.medecinNom }}</span>
+          </div>
+          
+          <div class="card-actions" *ngIf="rdv.status === 'en_attente'">
+            <button class="btn-accept" (click)="acceptRendezVous(rdv._id!)">
+              Accepter
+            </button>
+            <button class="btn-reject" (click)="refuseRendezVous(rdv._id!)">
+              Refuser
+            </button>
+          </div>
+  
+          <div class="card-status" [ngClass]="rdv.status">
+            <span>{{ getStatusLabel(rdv.status || 'en_attente') }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  
+    <div *ngIf="filteredRendezVous.length === 0" class="no-results">
+      <p>Aucun rendez-vous ne correspond à vos critères de recherche.</p>
+    </div>
+  
+    <div class="pagination" *ngIf="totalPages > 1">
+      <button [disabled]="currentPage === 1" (click)="changePage(currentPage - 1)">
+        <i class="fa fa-chevron-left"></i>
+      </button>
+      <span>{{ currentPage }}</span>
+      <span *ngIf="currentPage < totalPages - 1">...</span>
+      <button [disabled]="currentPage === totalPages" (click)="changePage(currentPage + 1)">
+        <i class="fa fa-chevron-right"></i>
+      </button>
+    </div>
+  </div>

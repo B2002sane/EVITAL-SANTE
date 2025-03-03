@@ -1,0 +1,152 @@
+  <div class="row">
+  <div class="col-sm-12">
+    <app-card cardClass="add-patient" cardTitle="Ajout d’un patient">
+          <!-- ajout-patient.component.html -->
+      <form [formGroup]="patientForm" (ngSubmit)="onSubmit()">
+        <h2>Ajout d’un patient</h2>
+        <div class="row">
+          <div class="form-group col-sm-6">
+            <label>Nom *</label>
+            <input type="text" formControlName="nom" placeholder="Nom">
+            <div *ngIf="f['nom'].touched && f['nom'].invalid" class="error">Le nom est requis.</div>
+          </div>
+          <div class="form-group col-sm-6">
+            <label>Prénom *</label>
+            <input type="text" formControlName="prenom" placeholder="Prénom">
+            <div *ngIf="f['prenom'].touched && f['prenom'].invalid" class="error">Le prénom est requis.</div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="form-group col-sm-6">
+            <label>Email *</label>
+            <input type="email" formControlName="email" placeholder="Email">
+            <div *ngIf="f['email'].touched && f['email'].invalid" class="error">Email invalide.</div>
+          </div>
+          
+          <div class="form-group col-sm-3">
+            <label>Téléphone *</label>
+            <input type="tel" formControlName="telephone" placeholder="Téléphone">
+            <div *ngIf="f['telephone'].touched && f['telephone'].invalid" class="error">
+              Téléphone invalide.
+            </div>
+          </div>
+  
+          <div class="form-group col-sm-3">
+            <label>Date de Naissance *</label>
+            <input type="date" formControlName="dateNaissance" [max]="today">
+            <div *ngIf="f['dateNaissance'].touched && f['dateNaissance'].invalid" class="error">Date requise.</div>
+          </div>
+
+        </div>
+        
+       <div class="row">
+        <div class="form-group col-sm-3">
+          <label>Genre *</label>
+          <select formControlName="genre">
+            <option value="">Sélectionner</option>
+            <option value="HOMME">Homme</option>
+            <option value="FEMME">Femme</option>
+          </select>
+          <div *ngIf="f['genre'].touched && f['genre'].invalid" class="error">Genre requis.</div>
+        </div>
+
+        <div class="form-group col-sm-3">
+          <label>Groupe Sanguin *</label>
+          <select formControlName="groupeSanguin">
+            <option value="">Sélectionner</option>
+            <option value="O+">O+</option>
+            <option value="O-">O-</option>  
+            <option value="A+">A+</option>
+            <option value="A-">A-</option>
+            <option value="B+">B+</option>
+            <option value="B-">B-</option>
+            <option value="AB+">AB+</option>
+            <option value="AB-">AB-</option>
+          </select>
+          <div *ngIf="f['groupeSanguin'].touched && f['groupeSanguin'].invalid" class="error">Groupe Sanguin requis.</div>
+        </div>
+
+        <div class="form-group col-sm-3">
+          <label>Poids *</label>
+          <input type="number" formControlName="poids" placeholder="Poids">
+          <div *ngIf="f['poids'].touched && f['poids'].invalid" class="error">Poids requis (min 30kg).</div>
+        </div>
+
+        <div class="form-group col-sm-3">
+          <label>Cathegorie *</label>
+          <select formControlName="categorie">
+            <option value="">Sélectionner</option>
+            <option  *ngIf="!isHomme"   value="FEMME_ENCEINTE">Femme Enceinte</option>
+            <option value="PERSONNE_AGEE">Personne Agee</option>
+            <option value="MALADE_CHRONIQUE">Malade Chronique</option>
+            <option value="ENFANT">Enfant</option>
+            <option value="AUTRE">Autre</option>
+          </select>
+          <div *ngIf="f['categorie'].touched && f['categorie'].invalid" class="error">categorie requis.</div>
+        </div>
+
+       </div>
+       <div class="row">
+        <div class="form-group col-sm-6">
+          <label>Adresse *</label>
+          <input type="text" formControlName="adresse" placeholder="Adresse">
+          <div *ngIf="f['adresse'].touched && f['adresse'].invalid" class="error">Adresse requise.</div>
+        </div>
+
+        <div class="form-group col-sm-6">
+          <label>Photo</label>
+          <input type="file" formControlName="photo" placeholder="Photo">
+        </div>
+
+        <input type="hidden" value="PATIENT" formControlName="role">
+        <input type="hidden" value="password123" formControlName="password">
+
+       </div> 
+     
+
+
+
+        
+        <button type="submit" [disabled]="patientForm.invalid">VALIDER</button>
+        <button class="annuler" (click)="onCancel()"  >ANNULER</button>
+      </form>
+
+    </app-card>
+  </div>
+</div>  
+
+<!-- <header>
+  <nav>
+      <ul>
+          <li><a href="/sample-page">Hospitalisé</a></li>
+          <li><a href="/patient">Malade Externe</a></li>
+      </ul>
+  </nav>
+  <button class="add-patient">+ Ajout Patient</button>
+</header>
+<main>
+  <div class="patient-card">
+      <img src="assets/images/user/avatar-2.jpg" alt="Photo Patient">
+      <div class="patient-info">
+          <h3>Mamadou Barry</h3>
+          <p>Hypertension</p>
+          <p>Âge : 30 ans</p>
+      </div>
+      <div class="patient-room">
+          <p>Chambre 10</p>
+      </div>
+  </div>
+  <div class="patient-card">
+      <img src="assets/images/user/avatar-2.jpg" alt="Photo Patient">
+      <div class="patient-info">
+          <h3>Khady Ndiaye</h3>
+          <p>Hypertension</p>
+          <p>Âge : 30 ans</p>
+      </div>
+      <div class="patient-room">
+          <p>Chambre 10</p>
+      </div>
+  </div>
+ 
+</main> -->

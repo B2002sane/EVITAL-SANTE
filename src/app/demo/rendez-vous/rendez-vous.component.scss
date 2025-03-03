@@ -1,0 +1,243 @@
+/* rendez-vous.component.scss */
+.rendez-vous-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  }
+  
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+  
+    h1 {
+      color: #056770;
+      margin: 0;
+      font-size: 24px;
+    }
+  }
+  
+  .btn-attente {
+    background-color: #056770;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: background-color 0.3s;
+  
+    &:hover {
+      background-color: #045359;
+    }
+  }
+  
+  .filters {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 30px;
+    align-items: center;
+    gap: 20px;
+  }
+  
+  .date-filter {
+    display: flex;
+    position: relative;
+    width: 300px;
+    
+    input {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      outline: none;
+    }
+  
+    .search-btn {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: #666;
+    }
+  }
+  
+  .status-filter {
+    display: flex;
+    gap: 20px;
+    
+    select {
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      outline: none;
+      background-color: white;
+    }
+  }
+  
+  .rendez-vous-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+    margin-bottom: 30px;
+  }
+  
+  .rendez-vous-card {
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    transition: transform 0.3s, box-shadow 0.3s;
+  
+    &:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+    }
+  }
+  
+  .card-header {
+    padding: 15px;
+    border-bottom: 1px solid #f0f0f0;
+  
+    h3 {
+      margin: 0 0 5px 0;
+      color: #333;
+      font-size: 16px;
+    }
+  
+    p {
+      margin: 0;
+      color: #888;
+      font-size: 14px;
+    }
+  }
+  
+  .card-content {
+    padding: 15px;
+  }
+  
+  .patient-info, .date-info, .time-info, .motif-info, .medecin-info {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+    
+    i {
+      width: 20px;
+      color: #666;
+      margin-right: 10px;
+    }
+    
+    span {
+      color: #333;
+    }
+  }
+  
+  .card-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+    
+    button {
+      flex: 1;
+      padding: 8px 0;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: 500;
+      transition: background-color 0.3s;
+    }
+    
+    .btn-accept {
+      background-color: #4CAF50;
+      color: white;
+      
+      &:hover {
+        background-color: #3e8e41;
+      }
+    }
+    
+    .btn-reject {
+      background-color: #f44336;
+      color: white;
+      
+      &:hover {
+        background-color: #d32f2f;
+      }
+    }
+  }
+  
+  .card-status {
+    margin-top: 15px;
+    padding: 5px 10px;
+    border-radius: 15px;
+    display: inline-block;
+    font-size: 12px;
+    font-weight: 500;
+    
+    &.en_attente {
+      background-color: #FFF3CD;
+      color: #856404;
+    }
+    
+    &.confirme {
+      background-color: #D4EDDA;
+      color: #155724;
+    }
+    
+    &.annule {
+      background-color: #F8D7DA;
+      color: #721C24;
+    }
+    
+    &.termine {
+      background-color: #D1ECF1;
+      color: #0C5460;
+    }
+  }
+  
+  .no-results {
+    text-align: center;
+    padding: 30px;
+    background-color: #f9f9f9;
+    border-radius: 10px;
+    margin-bottom: 30px;
+    
+    p {
+      color: #666;
+      font-size: 16px;
+    }
+  }
+  
+  .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+    
+    button {
+      background-color: white;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      padding: 5px 10px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+      
+      &:hover:not([disabled]) {
+        background-color: #f5f5f5;
+      }
+      
+      &[disabled] {
+        cursor: not-allowed;
+        opacity: 0.5;
+      }
+    }
+    
+    span {
+      color: #666;
+    }
+  }
