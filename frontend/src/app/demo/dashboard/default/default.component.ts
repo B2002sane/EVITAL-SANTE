@@ -20,7 +20,7 @@ import { CardComponent } from 'src/app/theme/shared/components/card/card.compone
   imports: [
     CommonModule,
     CardComponent,
-    IconDirective,
+   // IconDirective,
     MonthlyBarChartComponent,
     IncomeOverviewChartComponent
   ],
