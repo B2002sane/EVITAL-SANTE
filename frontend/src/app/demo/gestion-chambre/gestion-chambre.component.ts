@@ -1,10 +1,9 @@
-import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import Swal from 'sweetalert2';
 import { RouterModule } from '@angular/router';
 import { HttpClientModule } from '@angular/common/http';
+import Swal from 'sweetalert2';
 
 import { GestionChambreService, Chambre, Patient } from '../../service/gestion-chambre.service';
 
@@ -17,37 +16,29 @@ import { GestionChambreService, Chambre, Patient } from '../../service/gestion-c
   providers: [GestionChambreService]
 })
 export class GestionChambreComponent implements OnInit {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+gererLits(_t21: Chambre) {
+throw new Error('Method not implemented.');
+}
   chambres: Chambre[] = [];
   loading = false;
   error = '';
-  chambreForm: FormGroup;
 
   constructor(
-    public gestionChambreService: GestionChambreService,
-    private fb: FormBuilder
-  ) {
-    this.chambreForm = this.fb.group({
-      numero: ['', Validators.required],
-      nombreLits: ['', [Validators.required, Validators.min(1)]]
-    });
-  }
+    private gestionChambreService: GestionChambreService
+  ) {}
 
   ngOnInit(): void {
     this.loadChambres();
   }
 
+  // Charger les chambres
   loadChambres(): void {
     this.loading = true;
     this.error = '';
     this.gestionChambreService.getChambres().subscribe({
       next: (data) => {
-        console.log('Chambres reçues:', data);
-        this.chambres = data.map(chambre => {
-          if (!chambre.numero) {
-            console.error('Chambre sans numéro détectée:', chambre);
-          }
-          return chambre;
-        });
+        this.chambres = data;
         this.loading = false;
       },
       error: (err) => {
@@ -78,12 +69,6 @@ export class GestionChambreComponent implements OnInit {
 
   // Voir les détails d'une chambre
   voirChambre(chambre: Chambre): void {
-    // Vérifier que le numéro de la chambre existe
-    if (!chambre.numero) {
-      Swal.fire('Erreur', 'Numéro de chambre manquant', 'error');
-      return;
-    }
-
     this.gestionChambreService.getStatutOccupation(chambre.numero).subscribe({
       next: (data) => {
         const patientsList = data.patients && data.patients.length > 0
@@ -151,32 +136,15 @@ export class GestionChambreComponent implements OnInit {
           },
           error: (err) => {
             console.error('Erreur lors de l\'ajout', err);
-            let errorMsg = 'Erreur lors de l\'ajout de la chambre';
-
-            if (err.error && err.error.errors) {
-              errorMsg = Object.values(err.error.errors).join('<br>');
-            }
-
-            Swal.fire('Erreur', errorMsg, 'error');
+            Swal.fire('Erreur', 'Impossible d\'ajouter la chambre', 'error');
           }
         });
       }
     });
   }
 
-  // Modifier une chambre existante
+  // Modifier une chambre
   modifierChambre(chambre: Chambre): void {
-    // Vérifier que le numéro de la chambre existe
-    if (!chambre.numero) {
-      Swal.fire('Erreur', 'Numéro de chambre manquant', 'error');
-      return;
-    }
-
-    this.chambreForm.patchValue({
-      numero: chambre.numero,
-      nombreLits: chambre.nombreLits
-    });
-
     Swal.fire({
       title: 'Modifier la chambre',
       html: `
@@ -210,13 +178,7 @@ export class GestionChambreComponent implements OnInit {
           },
           error: (err) => {
             console.error('Erreur lors de la modification', err);
-            let errorMsg = 'Erreur lors de la modification de la chambre';
-
-            if (err.error && err.error.errors) {
-              errorMsg = Object.values(err.error.errors).join('<br>');
-            }
-
-            Swal.fire('Erreur', errorMsg, 'error');
+            Swal.fire('Erreur', 'Impossible de modifier la chambre', 'error');
           }
         });
       }
@@ -225,14 +187,9 @@ export class GestionChambreComponent implements OnInit {
 
   // Supprimer une chambre
   supprimerChambre(chambre: Chambre): void {
-    if (!chambre._id) { // Utiliser _id au lieu de numero
-      Swal.fire('Erreur', 'ID de chambre manquant', 'error');
-      return;
-    }
-  
     // Vérifier si la chambre a des lits occupés
     const litsOccupes = this.getLitsOccupes(chambre);
-  
+
     if (litsOccupes > 0) {
       Swal.fire(
         'Impossible de supprimer',
@@ -241,7 +198,7 @@ export class GestionChambreComponent implements OnInit {
       );
       return;
     }
-  
+
     Swal.fire({
       title: 'Êtes-vous sûr?',
       text: `Voulez-vous supprimer la chambre ${chambre.numero}?`,
@@ -251,7 +208,7 @@ export class GestionChambreComponent implements OnInit {
       cancelButtonText: 'Annuler'
     }).then((result) => {
       if (result.isConfirmed) {
-        this.gestionChambreService.deleteChambre(chambre._id).subscribe({ // Utiliser _id
+        this.gestionChambreService.deleteChambre(chambre._id).subscribe({
           next: () => {
             Swal.fire('Supprimé!', 'La chambre a été supprimée.', 'success');
             this.loadChambres();
@@ -266,159 +223,76 @@ export class GestionChambreComponent implements OnInit {
   }
 
   // Gérer les lits d'une chambre
-  gererLits(chambre: Chambre): void {
-    // Vérifier que le numéro de la chambre existe
-    if (!chambre.numero) {
-      Swal.fire('Erreur', 'Numéro de chambre manquant', 'error');
-      return;
-    }
-
-    this.gestionChambreService.getStatutOccupation(chambre.numero).subscribe({
-      next: (data) => {
-        let litsHTML = '';
-
-        chambre.lits.forEach(lit => {
-          const patient = data.patients.find((p: Patient) => p._id === lit.patientId);
-          const litStatut = lit.occupe
-            ? `<span class="lit-occupe">Occupé par ${patient ? patient.nom + ' ' + patient.prenom : 'Inconnu'}</span>`
-            : '<span class="lit-libre">Libre</span>';
-
-          litsHTML += `
-            <div class="lit-item">
-              <span>Lit ${lit.numero}:</span> ${litStatut}
-              ${lit.occupe
-                ? `<button class="lit-action liberer" data-lit="${lit.numero}">Libérer</button>`
-                : `<button class="lit-action assigner" data-lit="${lit.numero}">Assigner</button>`}
-            </div>
-          `;
-        });
-
-        Swal.fire({
-          title: `Gestion des lits - Chambre ${chambre.numero}`,
-          html: `
-            <style>
-              .lit-item { margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; }
-              .lit-libre { color: green; }
-              .lit-occupe { color: red; }
-              .lit-action { padding: 5px 10px; border-radius: 4px; cursor: pointer; border: none; }
-              .liberer { background-color: #ff4d4d; color: white; }
-              .assigner { background-color: #4dff4d; color: black; }
-            </style>
-            <div class="lits-container">
-              ${litsHTML}
-            </div>
-          `,
-          confirmButtonText: 'Fermer',
-          didOpen: () => {
-            // Ajouter des écouteurs d'événements pour les boutons de libération
-            document.querySelectorAll('.liberer').forEach(btn => {
-              btn.addEventListener('click', (e) => {
-                const litNumero = parseInt((e.currentTarget as HTMLElement).getAttribute('data-lit') || '0');
-                this.libererLit(chambre, litNumero);
-                Swal.close();
-              });
-            });
-
-            // Ajouter des écouteurs d'événements pour les boutons d'assignation
-            document.querySelectorAll('.assigner').forEach(btn => {
-              btn.addEventListener('click', (e) => {
-                const litNumero = parseInt((e.currentTarget as HTMLElement).getAttribute('data-lit') || '0');
-                this.assignerLit(chambre, litNumero);
-                Swal.close();
-              });
-            });
-          }
-        });
-      },
-      error: (err) => {
-        console.error('Erreur lors du chargement des lits', err);
-        Swal.fire('Erreur', 'Impossible de charger les détails des lits', 'error');
-      }
-    });
-  }
-
-  // Libérer un lit
-  libererLit(chambre: Chambre, numeroLit: number): void {
-    // Vérifier que le numéro de la chambre existe
-    if (!chambre.numero) {
-      Swal.fire('Erreur', 'Numéro de chambre manquant', 'error');
-      return;
-    }
-
-    Swal.fire({
-      title: 'Confirmation',
-      text: `Voulez-vous vraiment libérer le lit ${numeroLit} de la chambre ${chambre.numero}?`,
-      icon: 'question',
-      showCancelButton: true,
-      confirmButtonText: 'Oui, libérer',
-      cancelButtonText: 'Annuler'
-    }).then((result) => {
-      if (result.isConfirmed) {
-        this.gestionChambreService.libererLit(chambre.numero, numeroLit).subscribe({
-          next: () => {
-            Swal.fire('Succès', 'Lit libéré avec succès', 'success');
-            this.loadChambres();
-          },
-          error: (err) => {
-            console.error('Erreur lors de la libération du lit', err);
-            Swal.fire('Erreur', 'Impossible de libérer le lit', 'error');
-          }
-        });
-      }
-    });
-  }
-
-  // Assigner un lit à un patient
-  assignerLit(chambre: Chambre, numeroLit: number): void {
-    // Vérifier que le numéro de la chambre existe
-    if (!chambre.numero) {
-      Swal.fire('Erreur', 'Numéro de chambre manquant', 'error');
-      return;
-    }
-
-    Swal.fire({
-      title: 'Assigner un patient',
-      html: `
-        <div class="form-group">
-          <label for="patientId">ID du patient</label>
-          <input id="patientId" type="text" class="swal2-input" placeholder="ID du patient">
-        </div>
-      `,
-      showCancelButton: true,
-      confirmButtonText: 'Assigner',
-      cancelButtonText: 'Annuler',
-      preConfirm: () => {
-        const patientIdInput = document.getElementById('patientId') as HTMLInputElement;
-        const patientId = patientIdInput ? patientIdInput.value : '';
-
-        if (!patientId) {
-          Swal.showValidationMessage('Veuillez entrer l\'ID du patient');
-          return false;
+ // Libérer un lit
+libererLit(chambre: Chambre, numeroLit: number): void {
+  Swal.fire({
+    title: 'Confirmation',
+    text: `Voulez-vous vraiment libérer le lit ${numeroLit} de la chambre ${chambre.numero}?`,
+    icon: 'question',
+    showCancelButton: true,
+    confirmButtonText: 'Oui, libérer',
+    cancelButtonText: 'Annuler'
+  }).then((result) => {
+    if (result.isConfirmed) {
+      this.gestionChambreService.libererLit(chambre.numero, numeroLit).subscribe({
+        next: () => {
+          Swal.fire('Succès', 'Lit libéré avec succès', 'success');
+          this.loadChambres();
+        },
+        error: (err) => {
+          console.error('Erreur lors de la libération du lit', err);
+          Swal.fire('Erreur', 'Impossible de libérer le lit', 'error');
         }
+      });
+    }
+  });
+}
 
-        return { patientId };
+// Assigner un lit à un patient
+assignerLit(chambre: Chambre, numeroLit: number): void {
+  Swal.fire({
+    title: 'Assigner un patient',
+    html: `
+      <div class="form-group">
+        <label for="patientId">ID du patient</label>
+        <input id="patientId" type="text" class="swal2-input" placeholder="ID du patient">
+      </div>
+    `,
+    showCancelButton: true,
+    confirmButtonText: 'Assigner',
+    cancelButtonText: 'Annuler',
+    preConfirm: () => {
+      const patientIdInput = document.getElementById('patientId') as HTMLInputElement;
+      const patientId = patientIdInput ? patientIdInput.value : '';
+
+      if (!patientId) {
+        Swal.showValidationMessage('Veuillez entrer l\'ID du patient');
+        return false;
       }
-    }).then((result) => {
-      if (result.isConfirmed && result.value) {
-        const { patientId } = result.value;
 
-        this.gestionChambreService.assignerLit(chambre.numero, patientId, numeroLit).subscribe({
-          next: () => {
-            Swal.fire('Succès', 'Patient assigné avec succès', 'success');
-            this.loadChambres();
-          },
-          error: (err) => {
-            console.error('Erreur lors de l\'assignation du patient', err);
-            let errorMsg = 'Erreur lors de l\'assignation du patient';
+      return { patientId };
+    }
+  }).then((result) => {
+    if (result.isConfirmed && result.value) {
+      const { patientId } = result.value;
 
-            if (err.error && err.error.message) {
-              errorMsg = err.error.message;
-            }
+      this.gestionChambreService.assignerLit(chambre.numero, patientId, numeroLit).subscribe({
+        next: () => {
+          Swal.fire('Succès', 'Patient assigné avec succès', 'success');
+          this.loadChambres();
+        },
+        error: (err) => {
+          console.error('Erreur lors de l\'assignation du patient', err);
+          let errorMsg = 'Erreur lors de l\'assignation du patient';
 
-            Swal.fire('Erreur', errorMsg, 'error');
+          if (err.error && err.error.message) {
+            errorMsg = err.error.message;
           }
-        });
-      }
-    });
-  }
+
+          Swal.fire('Erreur', errorMsg, 'error');
+        }
+      });
+    }
+  });
+}
 }

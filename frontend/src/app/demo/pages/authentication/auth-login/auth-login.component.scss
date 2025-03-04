@@ -14,7 +14,7 @@
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
   width: 100%;
   max-width: 1200px;
-  height: 700px;
+  height: 810px;
   display: flex;
   overflow: hidden;
 }
@@ -22,21 +22,24 @@
 /* Partie gauche - Formulaire */
 .login-form-container {
   flex: 1;
-  padding: 40px;
+  padding: 10px;
   display: flex;
   flex-direction: column;
 }
 
 .logo-container {
-  margin-bottom: 40px;
+  margin-bottom: 80px;
+  justify-content: center;
+  
 }
 
 .logo {
-  height: 80px;
+  height: 150px;
 }
 
 .header-text {
   margin-bottom: 30px;
+  text-align: center;
 }
 
 .title {
@@ -44,6 +47,7 @@
   font-size: 24px;
   margin-bottom: 10px;
   font-weight: 600;
+  text-align: center;
 }
 
 .subtitle {
@@ -76,6 +80,8 @@ form {
   border-radius: 8px;
   font-size: 14px;
   transition: all 0.3s;
+
+  
 }
 
 .form-input:focus {
@@ -166,34 +172,37 @@ form {
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 40px;
+  padding: 0; // Supprimez le padding
+  overflow: hidden; // Assurez le remplissage complet
 }
 
 .image-wrapper {
-  position: relative;
-  max-width: 100%;
-  max-height: 100%;
+  width: 100%; // Largeur à 100%
+  height: 100%; // Hauteur à 100%
+  max-width: none; // Supprimez les contraintes de largeur max
+  max-height: none; // Supprimez les contraintes de hauteur max
 }
 
 .image-border {
-  position: relative;
-  padding: 10px;
-  border-radius: 15px;
-  background-color: white;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+  width: 100%; // Largeur à 100%
+  height: 100%; // Hauteur à 100%
+  border-radius: 0; // Supprimez les bordures arrondies si vous voulez un remplissage total
+  padding: 0; // Supprimez le padding
+  box-shadow: none; // Supprimez l'ombre si nécessaire
+  background-color: transparent; // Fond transparent
 }
 
 .doctors-image {
-  max-width: 100%;
-  max-height: 500px;
-  border-radius: 10px;
+  width: 100%; // Largeur à 100%
+  height: 100%; // Hauteur à 100%
+  object-fit: cover; // Couvre tout l'espace en conservant les proportions
+  object-position: center; // Centrer l'image
+  border-radius: 0; // Supprimez les bordures arrondies
 }
 
+// Ajustez éventuellement les décorations
 .decoration-plus {
-  position: absolute;
-  font-size: 24px;
-  color: #016b5b;
-  font-weight: bold;
+  display: none; // Ou repositionnez-les si vous voulez les garder
 }
 
 .top-right {
@@ -238,23 +247,138 @@ form {
 
 /* Styles pour le blocage de compte */
 .locked-account-warning {
-  background-color: #ffecb3;
-  border-left: 4px solid #ffc107;
-  padding: 15px;
-  margin-bottom: 20px;
-  border-radius: 8px;
   display: flex;
-  flex-direction: column;
   align-items: center;
+  background-color: #ffebee; // Rouge très clair
+  border-left: 5px solid #d32f2f; // Rouge foncé
+  border-radius: 10px;
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
   animation: pulse 1.5s infinite alternate;
+
+  .lock-icon-container {
+    margin-right: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
+    .lock-icon {
+      color: #d32f2f; // Rouge foncé
+      stroke-width: 2;
+    }
+  }
+
+  .lock-message {
+    flex-grow: 1;
+
+    h3 {
+      color: #d32f2f;
+      margin: 0 0 10px 0;
+      font-size: 18px;
+      font-weight: 600;
+    }
+
+    p {
+      color: #333;
+      margin: 5px 0;
+      font-size: 14px;
+    }
+
+    .countdown-container {
+      display: flex;
+      align-items: center;
+      margin-top: 10px;
+
+      p {
+        margin-right: 10px;
+        color: #666;
+      }
+
+      .countdown-timer {
+        display: flex;
+        align-items: center;
+        background-color: #d32f2f;
+        color: white;
+        padding: 5px 10px;
+        border-radius: 5px;
+
+        span {
+          font-size: 20px;
+          font-weight: bold;
+          margin-right: 5px;
+        }
+
+        small {
+          font-size: 12px;
+          opacity: 0.8;
+        }
+      }
+    }
+  }
 }
 
-.lock-icon {
-  font-size: 24px;
-  margin-bottom: 10px;
+@keyframes pulse {
+  from {
+    transform: scale(1);
+  }
+  to {
+    transform: scale(1.02);
+  }
 }
 
-.countdown {
-  font-weight: bold;
-  color: #d32f2f
+//message d'attention 
+.attempts-warning {
+  display: flex;
+  align-items: center;
+  background-color: #fff3e0; // Orange très clair
+  border-left: 4px solid #ff9800; // Orange
+  border-radius: 8px;
+  padding: 12px 15px;
+  margin-bottom: 15px;
+  animation: fadeIn 0.3s;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+
+  .warning-icon {
+    margin-right: 15px;
+    color: #ff9800; // Orange
+    display: flex;
+    align-items: center;
+    
+    svg {
+      stroke-width: 2;
+    }
+  }
+
+  .warning-content {
+    flex-grow: 1;
+    display: flex;
+    align-items: center;
+
+    .warning-text {
+      font-weight: 600;
+      color: #333;
+      margin-right: 8px;
+    }
+
+    .attempts-count {
+      font-weight: bold;
+      color: #ff9800; // Orange
+      background-color: rgba(255, 152, 0, 0.1);
+      padding: 3px 8px;
+      border-radius: 4px;
+    }
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
 }
+

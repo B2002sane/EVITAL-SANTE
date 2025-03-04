@@ -3,7 +3,6 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
-// Interfaces pour le modèle de données
 export interface Lit {
   numero: number;
   occupe: boolean;
@@ -25,7 +24,6 @@ export interface Chambre {
   patients?: Patient[];
 }
 
-// Interface pour le formulaire
 export interface ChambreFormData {
   numero: string;
   nombreLits?: number;
@@ -35,7 +33,7 @@ export interface ChambreFormData {
   providedIn: 'root'
 })
 export class GestionChambreService {
-  private apiUrl = 'http://localhost:8000/api/chambres';
+  private apiUrl = 'http://localhost:8000/api/chambres'; // Adaptez cette URL à votre backend
 
   constructor(private http: HttpClient) { }
 
@@ -47,15 +45,7 @@ export class GestionChambreService {
       );
   }
 
-  // Obtenir les chambres disponibles
-  getChambresDisponibles(): Observable<Chambre[]> {
-    return this.http.get<{chambres: Chambre[]}>(`${this.apiUrl}/disponibles`)
-      .pipe(
-        map(response => response.chambres)
-      );
-  }
-
-  // Obtenir une chambre spécifique par son numéro
+  // Obtenir une chambre spécifique
   getChambre(numero: string): Observable<Chambre> {
     return this.http.get<{chambre: Chambre}>(`${this.apiUrl}/${numero}`)
       .pipe(
@@ -84,9 +74,23 @@ export class GestionChambreService {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
 
-  // Obtenir le statut d'occupation d'une chambre
-  getStatutOccupation(numero: string): Observable<{ chambre: string, nombreTotal: number, litsOccupes: number, litsDisponibles: number, disponible: boolean, patients: Patient[] }> {
-    return this.http.get<{ chambre: string, nombreTotal: number, litsOccupes: number, litsDisponibles: number, disponible: boolean, patients: Patient[] }>(`${this.apiUrl}/${numero}/statut`);
+  // Obtenir le statut d'occupation
+  getStatutOccupation(numero: string): Observable<{
+    chambre: string, 
+    nombreTotal: number, 
+    litsOccupes: number, 
+    litsDisponibles: number, 
+    disponible: boolean, 
+    patients: Patient[]
+  }> {
+    return this.http.get<{
+      chambre: string, 
+      nombreTotal: number, 
+      litsOccupes: number, 
+      litsDisponibles: number, 
+      disponible: boolean, 
+      patients: Patient[]
+    }>(`${this.apiUrl}/${numero}/statut`);
   }
 
   // Assigner un lit à un patient

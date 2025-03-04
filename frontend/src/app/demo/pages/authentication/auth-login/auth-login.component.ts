@@ -108,6 +108,10 @@ export class AuthLoginComponent implements OnDestroy {
         // Le blocage a expiré, nettoyer les données
         localStorage.removeItem('loginLockData');
         this.resetLockState();
+
+         
+      // Effacer explicitement le message d'erreur
+      this.serverError = '';
       }
     }
   }
