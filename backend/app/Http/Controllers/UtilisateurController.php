@@ -441,4 +441,20 @@ public function assignerCarte(Request $request, $id)
 }
 
 
+    /**
+     * Obtenir les patients non hospitalisés
+     */
+  /*  public function getPatientsNonHospitalises()
+    {
+        $patients = Utilisateur::where('hospitalisation', false)
+                                ->where('role', 'PATIENT')
+                                ->get();
+
+        if ($patients->isEmpty()) {
+            return response()->json(['message' => 'Aucun patient non hospitalisé trouvé'], 404);
+        }
+
+        return response()->json(['patients' => $patients]);
+    }*/
+
 }

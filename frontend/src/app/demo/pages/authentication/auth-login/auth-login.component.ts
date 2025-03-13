@@ -7,6 +7,8 @@ import { interval, Subscription } from 'rxjs';
 import { take } from 'rxjs/operators';
 import { LoginService } from '../../../../service/login.service';
 
+
+
 @Component({
   selector: 'app-auth-login',
   standalone: true,
@@ -26,6 +28,13 @@ export class AuthLoginComponent implements OnDestroy {
   emailTouched: boolean = false;
   passwordTouched: boolean = false;
 
+  // Variables pour le formulaire de mot de passe oublié
+showForgotPasswordForm: boolean = false;
+forgotEmail: string = '';
+forgotEmailError: string = '';
+resetMessage: string = '';
+resetSuccess: boolean = false;
+
   // Variables pour le blocage après tentatives échouées
   failedAttempts: number = 0;
   isLocked: boolean = false;
@@ -34,7 +43,7 @@ export class AuthLoginComponent implements OnDestroy {
   lockTimerSubscription: Subscription | null = null;
 
   constructor(
-    private router: Router,
+    public router: Router,
     public loginService: LoginService
   ) {
     // Restaurer l'état de blocage depuis le localStorage si disponible
@@ -273,6 +282,7 @@ export class AuthLoginComponent implements OnDestroy {
       error: (error) => {
         this.isLoading = false;
 
+
         // Incrémenter le compteur de tentatives échouées
         this.incrementFailedAttempts();
 
@@ -293,6 +303,68 @@ export class AuthLoginComponent implements OnDestroy {
       }
     });
   }
+
+  // Méthode pour ouvrir le formulaire de mot de passe oublié
+  openForgotPassword(event: Event) {
+    event.preventDefault();
+    if (this.isLocked) return;
+    
+    this.showForgotPasswordForm = true;
+  }
+  
+  // Méthode pour envoyer le lien de réinitialisation
+  sendResetLink() {
+    // Valider l'email
+    this.forgotEmailError = '';
+    
+    if (!this.forgotEmail) {
+      this.forgotEmailError = "L'email est requis";
+      return;
+    }
+    
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    if (!emailRegex.test(this.forgotEmail)) {
+      this.forgotEmailError = "Format d'email invalide";
+      return;
+    }
+    
+    this.isLoading = true;
+    this.resetMessage = '';
+    
+    // Utiliser la méthode du service
+   this.loginService.sendPasswordResetLink(this.forgotEmail).subscribe({
+      next: (response) => {
+        this.isLoading = false;
+        this.resetSuccess = true;
+        this.resetMessage = response.message || 'Un lien de réinitialisation a été envoyé à votre adresse email.';
+      },
+      error: (error) => {
+        this.isLoading = false;
+        this.resetSuccess = false;
+        this.resetMessage = error.message || 'Une erreur est survenue lors de l\'envoi du lien.';
+      }
+    });
+  }
+  
+  // Méthode pour fermer le formulaire de mot de passe oublié
+  closeForgotPasswordForm() {
+    this.showForgotPasswordForm = false;
+    this.forgotEmail = '';
+    this.forgotEmailError = '';
+    this.resetMessage = '';
+    this.resetSuccess = false; // Ajoutez cette ligne
+
+  }
+
+
+  // Méthode pour réinitialiser le formulaire après envoi réussi
+resetForgotPasswordForm() {
+  this.forgotEmail = '';
+  this.forgotEmailError = '';
+  this.resetMessage = '';
+  this.resetSuccess = false;
+}
+  
 
   // Méthode pour gérer la connexion par RFID
   onRfidLogin(event: Event) {

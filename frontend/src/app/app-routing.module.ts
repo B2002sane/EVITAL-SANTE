@@ -58,10 +58,18 @@ const routes: Routes = [
           import('./demo/others/ajout-personnel/ajout-personnel.component').then((c) => c.AjoutPersonnelComponent)
       },
 
-      {
+     {
         path: 'gestion-chambre',
         loadComponent: () => import ('./demo/gestion-chambre/gestion-chambre.component').then((c) => c.GestionChambreComponent)
       },
+
+      {
+        path: 'reset-password',
+        loadComponent:() =>
+          import('./demo/forgot-password/forgot-password.component').then((c) => c.ForgotPasswordComponent)
+      }
+     
+
     ]
   },
   {

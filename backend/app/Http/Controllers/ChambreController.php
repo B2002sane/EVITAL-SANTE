@@ -98,47 +98,39 @@ class ChambreController extends Controller
 
 
 
-    /**
-     * Mettre à jour une chambre
-     */
-    public function update(Request $request, $id)
-    {
-        $chambre = Chambre::find($id);
+   /**
+ * Mettre à jour une chambre
+ */
+public function update(Request $request, $id)
+{
+    $chambre = Chambre::find($id);
 
-        if (!$chambre) {
-            return response()->json(['message' => 'Chambre non trouvée'], 404);
-        }
-
-        $validator = Validator::make($request->all(), [
-            'numero' => 'sometimes|string|unique:chambres,numero,' . $id,
-            'disponible' => 'sometimes|boolean'
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()], 422);
-        }
-
-        // // Ne pas permettre la modification du nombre de lits si des patients sont présents
-        // if ($request->has('nombreLits') && $chambre->nombreLitsOccupes() > 0) {
-        //     return response()->json([
-        //         'message' => 'Impossible de modifier le nombre de lits quand la chambre est occupée'
-        //     ], 422);
-        // }
-
-        $chambre->update($request->only(['numero', 'disponible']));
-
-        // Si le nombre de lits est modifié, réinitialiser les lits
-        if ($request->has('nombreLits') && $request->nombreLits != $chambre->nombreLits) {
-            $chambre->initialiserLits($request->nombreLits);
-        }
-
-        return response()->json(['chambre' => $chambre]);
+    if (!$chambre) {
+        return response()->json(['message' => 'Chambre non trouvée'], 404);
     }
 
+    $validator = Validator::make($request->all(), [
+        // Supprimer la validation du numéro car il ne devrait pas être modifiable
+        'disponible' => 'sometimes|boolean',
+        'nombreLits' => 'sometimes|integer|min:1'
+    ]);
 
+    if ($validator->fails()) {
+        return response()->json(['errors' => $validator->errors()], 422);
+    }
 
+    // Exclure le numéro des champs modifiables
+    $chambre->update($request->only(['disponible', 'nombreLits']));
 
+    // Si le nombre de lits est modifié, réinitialiser les lits
+    if ($request->has('nombreLits') && $request->nombreLits != $chambre->nombreLits) {
+        $chambre->initialiserLits($request->nombreLits);
+    }
 
+    return response()->json(['chambre' => $chambre]);
+}
+
+    
 
 
     /**
@@ -161,6 +153,8 @@ class ChambreController extends Controller
         $chambre->delete();
         return response()->json(['message' => 'Chambre supprimée avec succès']);
     }
+
+
 
 
 
@@ -215,9 +209,6 @@ class ChambreController extends Controller
 
 
 
-
-
-
     /**
      * Libérer un lit
      */
@@ -264,10 +255,6 @@ class ChambreController extends Controller
 
 
 
-
-
-
-
     /**
      * Obtenir les chambres disponibles
      */
@@ -276,10 +263,6 @@ class ChambreController extends Controller
         $chambres = Chambre::where('disponible', true)->get();
         return response()->json(['chambres' => $chambres]);
     }
-
-
-
-
 
     
     /**
@@ -295,11 +278,29 @@ class ChambreController extends Controller
 
         return response()->json([
             'chambre' => $chambre->numero,
-            'nombreTotal' => $chambre->nombreLits,
+            'nombreTotalLits' => $chambre->nombreLits,
             'litsOccupes' => $chambre->nombreLitsOccupes(),
             'litsDisponibles' => $chambre->nombreLitsDisponibles(),
             'disponible' => $chambre->disponible,
             'patients' => $chambre->patients
         ]);
     }
+
+
+        /**
+     * Obtenir les patients non hospitalisés
+     */
+    public function getPatientsNonHospitalises()
+    {
+        $patients = Utilisateur::where('hospitalisation', false)
+                                ->where('role', 'PATIENT')
+                                ->get();
+    
+        if ($patients->isEmpty()) {
+            return response()->json(['patients' => []], 200);
+        }
+    
+        return response()->json(['patients' => $patients]);
+    }
+
 }

@@ -17,6 +17,7 @@ import { io, Socket } from 'socket.io-client';
   providedIn: 'root'
 })
 export class LoginService {
+
   private apiUrl = 'http://localhost:8000/api'; // Remplacez par l'URL de votre API
   public socket: Socket;
 
@@ -175,6 +176,27 @@ login(email: string, password: string): Observable<{
       }
     }
   }
+
+    // Méthode pour envoyer le lien de réinitialisation de mot de passe
+    sendPasswordResetLink(email: string): Observable<{message: string}> {
+      return this.http.post<{message: string}>(`${this.apiUrl}/forgot`, { email })
+        .pipe(
+          catchError(this.handleError)
+        );
+    }
+  
+    // Méthode pour réinitialiser le mot de passe
+    resetPassword(data: {
+      email: string, 
+      token: string, 
+      password: string, 
+      password_confirmation: string
+    }): Observable<{message: string}> {
+      return this.http.post<{message: string}>(`${this.apiUrl}/reset`, data)
+        .pipe(
+          catchError(this.handleError)
+        );
+    }
   
 
   // Connexion avec vérification de l'email

@@ -1,384 +1,1007 @@
-/* Styles de base pour le conteneur de connexion */
-.login-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-  background-color: #F5F7FA;
-  font-family: 'Roboto', sans-serif;
-}
-
-.login-card {
-  background-color: white;
-  border-radius: 20px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-  width: 100%;
-  max-width: 1200px;
-  height: 810px;
-  display: flex;
-  overflow: hidden;
-}
-
-/* Partie gauche - Formulaire */
-.login-form-container {
-  flex: 1;
-  padding: 10px;
-  display: flex;
-  flex-direction: column;
-}
-
-.logo-container {
-  margin-bottom: 80px;
-  justify-content: center;
-  
-}
-
-.logo {
-  height: 150px;
-}
-
-.header-text {
-  margin-bottom: 30px;
-  text-align: center;
-}
-
-.title {
-  color: #016b5b;
-  font-size: 24px;
-  margin-bottom: 10px;
-  font-weight: 600;
-  text-align: center;
-}
-
-.subtitle {
-  color: #666;
-  font-size: 14px;
-}
-
-/* Styles pour le formulaire */
-form {
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-}
-
-.form-group {
-  margin-bottom: 20px;
-  position: relative;
-}
-
-.input-container {
-  position: relative;
-  display: flex;
-  align-items: center;
-}
-
-.form-input {
-  width: 100%;
-  padding: 15px 40px;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  font-size: 14px;
-  transition: all 0.3s;
-
-  
-}
-
-.form-input:focus {
-  border-color: #016b5b;
-  outline: none;
-  box-shadow: 0 0 0 2px rgba(1, 107, 91, 0.1);
-}
-
-.form-input:disabled {
-  background-color: #f5f5f5;
-  cursor: not-allowed;
-  color: #999;
-}
-
-.input-icon-left,
-.input-icon-right {
-  position: absolute;
-  color: #777;
-}
-
-.input-icon-left {
-  left: 12px;
-}
-
-.input-icon-right {
-  right: 12px;
-  cursor: pointer;
-}
-
-.forgot-password {
-  display: flex;
-  justify-content: flex-end;
-  margin-bottom: 20px;
-}
-
-.forgot-password-link {
-  color: #016b5b;
-  font-size: 12px;
-  text-decoration: none;
-}
-
-.forgot-password-link.disabled {
-  color: #ccc;
-  pointer-events: none;
-  cursor: not-allowed;
-}
-
-.btn-submit,
-.btn-rfid {
-  background-color: #016b5b;
-  color: white;
-  border: none;
-  padding: 15px;
-  border-radius: 8px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background-color 0.3s;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.btn-submit:hover,
-.btn-rfid:hover {
-  background-color: #015a4d;
-}
-
-.btn-submit:disabled,
-.btn-rfid:disabled {
-  background-color: #ccc;
-  cursor: not-allowed;
-}
-
-.btn-rfid {
-  background-color: #f0f0f0;
-  color: #333;
-  margin-top: 15px;
-}
-
-.btn-rfid:hover {
-  background-color: #e0e0e0;
-}
-
-/* Partie droite - Image */
-.image-container {
-  flex: 1;
-  background-color: #e9f9f5;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 0; // Supprimez le padding
-  overflow: hidden; // Assurez le remplissage complet
-}
-
-.image-wrapper {
-  width: 100%; // Largeur à 100%
-  height: 100%; // Hauteur à 100%
-  max-width: none; // Supprimez les contraintes de largeur max
-  max-height: none; // Supprimez les contraintes de hauteur max
-}
-
-.image-border {
-  width: 100%; // Largeur à 100%
-  height: 100%; // Hauteur à 100%
-  border-radius: 0; // Supprimez les bordures arrondies si vous voulez un remplissage total
-  padding: 0; // Supprimez le padding
-  box-shadow: none; // Supprimez l'ombre si nécessaire
-  background-color: transparent; // Fond transparent
-}
-
-.doctors-image {
-  width: 100%; // Largeur à 100%
-  height: 100%; // Hauteur à 100%
-  object-fit: cover; // Couvre tout l'espace en conservant les proportions
-  object-position: center; // Centrer l'image
-  border-radius: 0; // Supprimez les bordures arrondies
-}
-
-// Ajustez éventuellement les décorations
-.decoration-plus {
-  display: none; // Ou repositionnez-les si vous voulez les garder
-}
-
-.top-right {
-  top: -10px;
-  right: -10px;
-}
-
-.top-left {
-  top: -10px;
-  left: -10px;
-}
-
-.bottom-right {
-  bottom: -10px;
-  right: -10px;
-}
-
-/* Styles pour les erreurs et alertes */
-.error-text {
-  color: #f44336;
-  font-size: 12px;
-  margin-top: 5px;
-  padding-left: 5px;
-  animation: fadeIn 0.3s;
-}
-
-.error-message {
-  color: #f44336;
-  text-align: center;
-  margin: 15px 0;
-  font-size: 14px;
-  padding: 10px;
-  background-color: rgba(244, 67, 54, 0.1);
-  border-radius: 8px;
-  animation: fadeIn 0.3s;
-}
-
-.input-error {
-  border-color: #f44336 !important;
-  background-color: rgba(244, 67, 54, 0.03);
-}
-
-/* Styles pour le blocage de compte */
-.locked-account-warning {
-  display: flex;
-  align-items: center;
-  background-color: #ffebee; // Rouge très clair
-  border-left: 5px solid #d32f2f; // Rouge foncé
-  border-radius: 10px;
-  padding: 20px;
-  margin-bottom: 20px;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-  animation: pulse 1.5s infinite alternate;
-
-  .lock-icon-container {
-    margin-right: 20px;
+/* ===============================================
+   CONTENEUR PRINCIPAL ET STRUCTURE DE BASE
+   =============================================== */
+   .login-container {
     display: flex;
-    align-items: center;
     justify-content: center;
-    
-    .lock-icon {
-      color: #d32f2f; // Rouge foncé
-      stroke-width: 2;
-    }
-  }
-
-  .lock-message {
-    flex-grow: 1;
-
-    h3 {
-      color: #d32f2f;
-      margin: 0 0 10px 0;
-      font-size: 18px;
-      font-weight: 600;
-    }
-
-    p {
-      color: #333;
-      margin: 5px 0;
-      font-size: 14px;
-    }
-
-    .countdown-container {
-      display: flex;
-      align-items: center;
-      margin-top: 10px;
-
-      p {
-        margin-right: 10px;
-        color: #666;
-      }
-
-      .countdown-timer {
-        display: flex;
-        align-items: center;
-        background-color: #d32f2f;
-        color: white;
-        padding: 5px 10px;
-        border-radius: 5px;
-
-        span {
-          font-size: 20px;
-          font-weight: bold;
-          margin-right: 5px;
-        }
-
-        small {
-          font-size: 12px;
-          opacity: 0.8;
-        }
-      }
-    }
-  }
-}
-
-@keyframes pulse {
-  from {
-    transform: scale(1);
-  }
-  to {
-    transform: scale(1.02);
-  }
-}
-
-//message d'attention 
-.attempts-warning {
-  display: flex;
-  align-items: center;
-  background-color: #fff3e0; // Orange très clair
-  border-left: 4px solid #ff9800; // Orange
-  border-radius: 8px;
-  padding: 12px 15px;
-  margin-bottom: 15px;
-  animation: fadeIn 0.3s;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-
-  .warning-icon {
-    margin-right: 15px;
-    color: #ff9800; // Orange
-    display: flex;
     align-items: center;
-    
-    svg {
-      stroke-width: 2;
-    }
+    height: 100vh;
+    background-color: #f8fcfb; /* Fond légèrement teinté de vert */
+    font-family: 'Roboto', sans-serif;
+    /* Ajout d'un dégradé subtil dans le fond */
+    background: linear-gradient(135deg, #f8fcfb 0%, #e9f9f5 100%);
   }
-
-  .warning-content {
-    flex-grow: 1;
+  
+  .login-card {
+    background-color: white;
+    border-radius: 24px; /* Coins plus arrondis pour un look moderne */
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 1700px;
+    height: 810px;
     display: flex;
-    align-items: center;
-
-    .warning-text {
-      font-weight: 600;
-      color: #333;
-      margin-right: 8px;
-    }
-
-    .attempts-count {
-      font-weight: bold;
-      color: #ff9800; // Orange
-      background-color: rgba(255, 152, 0, 0.1);
-      padding: 3px 8px;
-      border-radius: 4px;
-    }
+    overflow: hidden;
+    /* Animation subtile à l'apparition */
+    animation: cardAppear 0.6s ease-out;
   }
-
-  @keyframes fadeIn {
+  
+  /* Classe spécifique pour la carte quand un avertissement de blocage est présent */
+  .login-card.with-lock-warning {
+    height: auto;
+    min-height: 810px;
+  }
+  
+  @keyframes cardAppear {
     from {
       opacity: 0;
-      transform: translateY(-10px);
+      transform: translateY(20px);
     }
     to {
       opacity: 1;
       transform: translateY(0);
     }
   }
-}
-
+  
+  /* ===============================================
+     PARTIE GAUCHE - FORMULAIRE DE CONNEXION
+     =============================================== */
+  .login-form-container {
+    flex: 1;
+    padding: 30px 40px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start; /* Changer à flex-start au lieu de center */
+    align-items: center; /* Centrage horizontal des éléments */
+    overflow-y: hidden; /* Empêcher le défilement vertical */
+    max-height: 100%;
+    animation: fadeSlideIn 0.5s ease-out;
+  }
+  
+  @keyframes fadeSlideIn {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  .logo-container {
+    margin-bottom: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .logo {
+    height: 130px;
+    /* Animation subtile au survol */
+    transition: transform 0.3s ease;
+  }
+  
+  .logo:hover {
+    transform: scale(1.05);
+  }
+  
+  /* Réduire la taille du logo lors du blocage */
+  .locked-account-warning + .logo-container .logo {
+    height: 90px;
+  }
+  
+  /* Ajuster la marge du logo quand l'alerte de blocage est présente */
+  .locked-account-warning + .logo-container {
+    margin-bottom: 15px;
+  }
+  
+  .header-text {
+    margin-bottom: 35px;
+    text-align: center;
+    width: 100%;
+    max-width: 450px; /* Limite la largeur pour une meilleure lecture */
+  }
+  
+  /* Réduire la marge du header quand l'alerte de blocage est présente */
+  .locked-account-warning ~ .header-text {
+    margin-bottom: 20px;
+  }
+  
+  .title {
+    color: #016b5b;
+    font-size: 28px;
+    margin-bottom: 12px;
+    font-weight: 600;
+    text-align: center;
+    /* Effet de texte légèrement 3D */
+    text-shadow: 1px 1px 1px rgba(0,0,0,0.05);
+  }
+  
+  /* Titre plus compact quand l'alerte de blocage est présente */
+  .locked-account-warning ~ .header-text .title {
+    font-size: 24px;
+    margin-bottom: 8px;
+  }
+  
+  .subtitle {
+    color: #555;
+    font-size: 15px;
+    line-height: 1.5;
+    /* Légère transparence pour une hiérarchie visuelle */
+    opacity: 0.9;
+  }
+  
+  /* Sous-titre plus compact quand l'alerte de blocage est présente */
+  .locked-account-warning ~ .header-text .subtitle {
+    font-size: 14px;
+    line-height: 1.4;
+  }
+  
+  /* ===============================================
+     STYLES POUR LE FORMULAIRE
+     =============================================== */
+  form {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    width: 100%;
+    max-width: 500px; /* Limitation de la largeur du formulaire */
+  }
+  
+  .form-group {
+    margin-bottom: 25px;
+    position: relative;
+  }
+  
+  /* Réduire les marges des éléments du formulaire quand l'alerte de blocage est présente */
+  .locked-account-warning ~ form .form-group {
+    margin-bottom: 12px;
+  }
+  
+  .input-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+  
+  .form-input {
+    width: 100%;
+    padding: 15px 40px;
+    border: 1px solid #e0e0e0;
+    border-radius: 20px; /* Coins plus arrondis */
+    font-size: 15px;
+    background-color: #f8fcfb; /* Léger fond pour indiquer qu'il s'agit d'un champ */
+    transition: all 0.3s ease;
+  }
+  
+  /* Réduit le padding des inputs quand l'alerte de blocage est présente */
+  .locked-account-warning ~ form .form-input {
+    padding: 12px 40px;
+    font-size: 14px;
+  }
+  
+  .form-input:focus {
+    border-color: #016b5b;
+    background-color: white; /* Revient à blanc en focus */
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(1, 107, 91, 0.1);
+    transform: translateY(-5px); /* Légère élévation pour effet 3D */
+  }
+  
+  .form-input:disabled {
+    background-color: #f5f5f5;
+    cursor: not-allowed;
+    color: #999;
+    border-color: #ddd;
+  }
+  
+  .input-icon-left,
+  .input-icon-right {
+    position: absolute;
+    color: #016b5b; /* Icônes de la couleur principale */
+    opacity: 0.7;
+    transition: opacity 0.3s;
+  }
+  
+  .form-input:focus ~ .input-icon-left,
+  .form-input:focus ~ .input-icon-right {
+    opacity: 1; /* Opacité pleine en focus */
+  }
+  
+  .input-icon-left {
+    left: 12px;
+  }
+  
+  .input-icon-right {
+    right: 12px;
+    cursor: pointer;
+  }
+  
+  .input-icon-right:hover {
+    opacity: 1; /* Opacité pleine au survol */
+  }
+  
+  .forgot-password {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 15px;
+    margin-bottom: 25px;
+  }
+  
+  /* Réduire les marges du lien mot de passe oublié quand l'alerte de blocage est présente */
+  .locked-account-warning ~ form .forgot-password {
+    margin-top: 10px;
+    margin-bottom: 15px;
+  }
+  
+  .forgot-password-link {
+    color: #016b5b;
+    font-size: 14px; /* Taille légèrement augmentée */
+    text-decoration: none;
+    transition: all 0.2s;
+    padding: 5px;
+    border-radius: 4px;
+  }
+  
+  .forgot-password-link:hover {
+    color: #015a4d;
+    background-color: rgba(1, 107, 91, 0.05);
+    text-decoration: underline;
+  }
+  
+  .forgot-password-link.disabled {
+    color: #ccc;
+    pointer-events: none;
+    cursor: not-allowed;
+  }
+  
+  /* ===============================================
+     BOUTONS
+     =============================================== */
+  .btn-submit,
+  .btn-rfid {
+    background-color: #016b5b;
+    color: white;
+    border: none;
+    padding: 15px;
+    border-radius: 20px; /* Coins plus arrondis */
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    letter-spacing: 0.5px;
+  }
+  
+  /* Réduit la taille des boutons quand l'alerte de blocage est présente */
+  .locked-account-warning ~ form .btn-submit,
+  .locked-account-warning ~ form .btn-rfid {
+    padding: 12px;
+    font-size: 14px;
+  }
+  
+  .btn-submit {
+    box-shadow: 0 4px 6px rgba(1, 107, 91, 0.2);
+  }
+  
+  .btn-submit:hover:not(:disabled) {
+    background-color: #015a4d;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(1, 107, 91, 0.25);
+  }
+  
+  .btn-submit:active:not(:disabled) {
+    transform: scale(0.98); /* Effet d'appui */
+  }
+  
+  .btn-submit:disabled,
+  .btn-rfid:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+    box-shadow: none;
+  }
+  
+  .btn-rfid {
+    background: linear-gradient(to right, #f0f0f0, #e6e6e6);
+    color: #333;
+    margin-top: 25px;
+    border: 1px solid #ddd;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  }
+  
+  /* Ajuster l'espacement des boutons quand l'alerte de blocage est présente */
+  .locked-account-warning ~ form .btn-rfid {
+    margin-top: 15px;
+  }
+  
+  .btn-rfid:hover:not(:disabled) {
+    background: linear-gradient(to right, #e6e6e6, #f0f0f0);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .button-spinner {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .spinner {
+    width: 20px;
+    height: 20px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    border-top-color: white;
+    margin-right: 10px;
+    animation: spin 0.8s linear infinite;
+  }
+  
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+  
+  /* ===============================================
+     MESSAGES D'ERREUR ET ALERTES
+     =============================================== */
+  .error-text {
+    color: #f44336;
+    font-size: 13px;
+    margin-top: 6px;
+    padding-left: 5px;
+    animation: fadeIn 0.3s, shake 0.5s cubic-bezier(.36,.07,.19,.97) both;
+  }
+  
+  /* Réduire la taille du texte d'erreur quand l'alerte de blocage est présente */
+  .locked-account-warning ~ form .error-text {
+    font-size: 12px;
+    margin-top: 4px;
+  }
+  
+  .error-message {
+    color: #f44336;
+    text-align: center;
+    margin: 15px 0;
+    font-size: 14px;
+    padding: 12px;
+    background-color: rgba(244, 67, 54, 0.1);
+    border-radius: 10px;
+    border-left: 4px solid #f44336;
+    animation: fadeIn 0.3s, shake 0.5s cubic-bezier(.36,.07,.19,.97) both;
+  }
+  
+  /* Réduire la taille du message d'erreur quand l'alerte de blocage est présente */
+  .locked-account-warning ~ form .error-message {
+    font-size: 13px;
+    padding: 10px;
+    margin: 10px 0;
+  }
+  
+  @keyframes shake {
+    10%, 90% { transform: translate3d(-1px, 0, 0); }
+    20%, 80% { transform: translate3d(2px, 0, 0); }
+    30%, 50%, 70% { transform: translate3d(-3px, 0, 0); }
+    40%, 60% { transform: translate3d(3px, 0, 0); }
+  }
+  
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+  
+  .input-error {
+    border-color: #f44336 !important;
+    background-color: rgba(244, 67, 54, 0.05);
+  }
+  
+  /* ===============================================
+     STYLES POUR LE BLOCAGE DE COMPTE
+     =============================================== */
+  .locked-account-warning {
+    display: flex;
+    align-items: center;
+    background-color: #ffebee;
+    border-left: 5px solid #d32f2f;
+    border-radius: 12px;
+    padding: 12px;
+    margin-bottom: 15px;
+    box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+    animation: pulse 1.5s infinite alternate;
+    max-height: none;
+    width: 100%;
+    max-width: 500px;
+  }
+  
+  .lock-icon-container {
+    margin-right: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .lock-icon {
+    color: #d32f2f;
+    stroke-width: 2;
+  }
+  
+  .lock-message {
+    flex-grow: 1;
+  }
+  
+  .lock-message h3 {
+    color: #d32f2f;
+    margin: 0 0 5px 0;
+    font-size: 15px;
+    font-weight: 600;
+  }
+  
+  .lock-message p {
+    color: #333;
+    margin: 2px 0;
+    font-size: 12px;
+    line-height: 1.4;
+  }
+  
+  .countdown-container {
+    display: flex;
+    align-items: center;
+    margin-top: 6px;
+  }
+  
+  .countdown-container p {
+    margin-right: 10px;
+    color: #666;
+  }
+  
+  .countdown-timer {
+    display: flex;
+    align-items: center;
+    background: linear-gradient(to right, #d32f2f, #f44336);
+    color: white;
+    padding: 3px 6px;
+    border-radius: 6px;
+    box-shadow: 0 3px 8px rgba(211, 47, 47, 0.3);
+    animation: pulse 2s infinite;
+  }
+  
+  .countdown-timer span {
+    font-size: 14px;
+    font-weight: bold;
+    margin-right: 5px;
+  }
+  
+  .countdown-timer small {
+    font-size: 11px;
+    opacity: 0.9;
+  }
+  
+  @keyframes pulse {
+    0% { box-shadow: 0 0 0 0 rgba(211, 47, 47, 0.5); }
+    70% { box-shadow: 0 0 0 10px rgba(211, 47, 47, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(211, 47, 47, 0); }
+  }
+  
+  /* ===============================================
+     MESSAGE D'ATTENTION (TENTATIVES ÉCHOUÉES)
+     =============================================== */
+  .attempts-warning {
+    display: flex;
+    align-items: center;
+    background-color: #fff8e1; /* Orange clair */
+    border-left: 4px solid #ff9800;
+    border-radius: 10px;
+    padding: 12px 14px;
+    margin: 12px 0 15px 0;
+    animation: fadeIn 0.3s;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.08);
+    max-width: 500px;
+  }
+  
+  /* Version plus compacte quand l'alerte de blocage est présente */
+  .locked-account-warning ~ .attempts-warning {
+    padding: 10px 12px;
+    margin: 10px 0;
+  }
+  
+  .warning-icon {
+    margin-right: 12px;
+    color: #ff9800;
+    display: flex;
+    align-items: center;
+  }
+  
+  .warning-icon svg {
+    stroke-width: 2;
+  }
+  
+  .warning-content {
+    flex-grow: 1;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap; /* Pour le responsive */
+  }
+  
+  .warning-text {
+    font-weight: 600;
+    color: #333;
+    margin-right: 8px;
+    font-size: 13px;
+  }
+  
+  /* Version plus compacte quand l'alerte de blocage est présente */
+  .locked-account-warning ~ .attempts-warning .warning-text {
+    font-size: 12px;
+  }
+  
+  .attempts-count {
+    font-weight: bold;
+    color: #ff9800;
+    background-color: rgba(255, 152, 0, 0.1);
+    padding: 3px 8px;
+    border-radius: 20px; /* Plus rond */
+    border: 1px solid rgba(255, 152, 0, 0.2);
+    font-size: 13px;
+  }
+  
+  /* Version plus compacte quand l'alerte de blocage est présente */
+  .locked-account-warning ~ .attempts-warning .attempts-count {
+    padding: 2px 6px;
+    font-size: 12px;
+  }
+  
+  /* ===============================================
+     PARTIE DROITE - IMAGE
+     =============================================== */
+  .image-container {
+    flex: 1.5;
+    background-color: #e9f9f5;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0;
+    overflow: hidden;
+    position: relative; /* Pour le positionnement des éléments décoratifs */
+  }
+  
+  /* Ajout d'un overlay pour améliorer le contraste et la profondeur */
+  .image-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(45deg, rgba(1, 107, 91, 0.2), transparent);
+    z-index: 1;
+  }
+  
+  .image-wrapper {
+    width: 100%;
+    height: 100%;
+    position: relative;
+  }
+  
+  .image-border {
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    background-color: transparent;
+  }
+  
+  .doctors-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    transition: transform 10s ease; /* Animation très lente pour un effet subtil */
+  }
+  
+  /* Animation subtile au survol */
+  .login-card:hover .doctors-image {
+    transform: scale(1.05);
+  }
+  
+  /* Éléments décoratifs repositionnés */
+  .decoration-plus {
+    position: absolute;
+    font-size: 40px;
+    color: rgba(1, 107, 91, 0.15);
+    z-index: 2;
+  }
+  
+  .top-right {
+    top: 30px;
+    right: 30px;
+  }
+  
+  .top-left {
+    top: 30px;
+    left: 30px;
+  }
+  
+  .bottom-right {
+    bottom: 30px;
+    right: 30px;
+  }
+  
+  /* ===============================================
+     STYLES POUR LE MODAL MOT DE PASSE OUBLIÉ
+     =============================================== */
+  .forgot-password-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    z-index: 1000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    backdrop-filter: blur(5px); /* Effet de flou en arrière-plan amélioré */
+    transition: all 0.3s ease;
+  }
+  
+  .forgot-password-container {
+    background-color: white;
+    border-radius: 16px;
+    padding: 30px;
+    width: 450px;
+    max-width: 90%;
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+    transform: translateY(0);
+    animation: slideIn 0.4s ease;
+  }
+  
+  @keyframes slideIn {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  .forgot-password-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+    border-bottom: 1px solid #eaeaea;
+    padding-bottom: 15px;
+  }
+  
+  .forgot-password-header h3 {
+    margin: 0;
+    color: #016b5b;
+    font-size: 20px;
+    font-weight: 600;
+  }
+  
+  .close-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #666;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+  }
+  
+  .close-btn:hover {
+    background-color: rgba(1, 107, 91, 0.1);
+    color: #016b5b;
+  }
+  
+  .close-btn svg {
+    width: 20px;
+    height: 20px;
+  }
+  
+  .forgot-password-form p {
+    margin-bottom: 25px;
+    color: #555;
+    font-size: 15px;
+    line-height: 1.5;
+  }
+  
+  .forgot-password-form .form-group {
+    margin-bottom: 25px;
+  }
+  
+  .forgot-password-form .input-container .form-input {
+    background-color: #f8fcfb;
+    transition: all 0.3s ease;
+  }
+  
+  .forgot-password-form .input-container .form-input:focus {
+    background-color: white;
+    box-shadow: 0 0 0 3px rgba(1, 107, 91, 0.1);
+  }
+  
+  .forgot-password-form .input-container .input-icon-left {
+    color: #016b5b;
+  }
+  
+  .forgot-password-form .btn-submit {
+    background-color: #016b5b;
+    border-radius: 10px;
+    padding: 15px;
+    margin-top: 15px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    box-shadow: 0 4px 6px rgba(1, 107, 91, 0.2);
+    transition: all 0.3s ease;
+  }
+  
+  .forgot-password-form .btn-submit:hover:not(:disabled) {
+    background-color: #015a4d;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(1, 107, 91, 0.25);
+  }
+  
+  .forgot-password-form .btn-submit:active:not(:disabled) {
+    transform: translateY(0);
+  }
+  
+  .success-message {
+    text-align: center;
+    padding: 20px 10px;
+  }
+  
+  .success-icon {
+    color: #016b5b;
+    margin-bottom: 20px;
+    animation: scaleIn 0.5s ease;
+  }
+  
+  .success-icon svg {
+    width: 60px;
+    height: 60px;
+  }
+  
+  @keyframes scaleIn {
+    from {
+      opacity: 0;
+      transform: scale(0.5);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+  
+  .success-message h4 {
+    color: #016b5b;
+    margin-bottom: 15px;
+    font-size: 22px;
+    font-weight: 600;
+  }
+  
+  .success-message p {
+    color: #555;
+    margin-bottom: 20px;
+    font-size: 15px;
+    line-height: 1.5;
+  }
+  
+  .success-message .btn-submit {
+    margin: 0 auto;
+    max-width: 200px;
+    margin-top: 15px;
+  }
+  
+  .reset-message {
+    margin-top: 20px;
+    padding: 12px 15px;
+    border-radius: 8px;
+    font-size: 14px;
+    text-align: center;
+    transition: all 0.3s ease;
+    animation: fadeIn 0.3s ease;
+  }
+  
+  .reset-message.success {
+    background-color: rgba(1, 107, 91, 0.1);
+    color: #016b5b;
+    border-left: 4px solid #016b5b;
+  }
+  
+  .reset-message:not(.success) {
+    background-color: rgba(244, 67, 54, 0.1);
+    color: #f44336;
+    border-left: 4px solid #f44336;
+  }
+  
+  /* ===============================================
+     RESPONSIVE DESIGN
+     =============================================== */
+  @media (max-width: 1200px) {
+    .login-card {
+      max-width: 95%;
+      height: 750px;
+    }
+    
+    .login-card.with-lock-warning {
+      height: auto;
+      min-height: 700px;
+    }
+    
+    .logo {
+      height: 110px;
+    }
+  }
+  
+  @media (max-width: 992px) {
+    .login-card {
+      flex-direction: column;
+      height: auto;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+    
+    .login-card.with-lock-warning {
+      max-height: none;
+      overflow-y: hidden;
+    }
+    
+    .image-container {
+      display: none; /* Masquer l'image sur les petits écrans */
+    }
+    
+    .login-form-container {
+      width: 100%;
+      padding: 40px 30px;
+    }
+    
+    .login-card.with-lock-warning .login-form-container {
+      padding: 30px 25px;
+    }
+  }
+  
+  @media (max-width: 576px) {
+    .login-container {
+      padding: 20px;
+      height: auto;
+      min-height: 100vh;
+    }
+    
+    .login-card {
+      max-width: 100%;
+      border-radius: 16px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+    
+    .login-form-container {
+      padding: 30px 20px;
+    }
+    
+    .login-card.with-lock-warning .login-form-container {
+      padding: 25px 15px;
+    }
+    
+    .logo {
+      height: 90px;
+    }
+    
+    .locked-account-warning + .logo-container .logo {
+      height: 80px;
+    }
+    
+    .title {
+      font-size: 24px;
+    }
+    
+    .subtitle {
+      font-size: 14px;
+    }
+    
+    .form-input {
+      padding: 12px 35px;
+      font-size: 14px;
+    }
+    
+    .btn-submit, .btn-rfid {
+      padding: 12px;
+    }
+    
+    .forgot-password-container {
+      padding: 20px;
+      width: 95%;
+    }
+    
+    .forgot-password-header h3 {
+      font-size: 18px;
+    }
+    
+    .locked-account-warning {
+      padding: 10px;
+    }
+  }
+  
+  @media (max-width: 360px) {
+    .login-form-container {
+      padding: 20px 15px;
+    }
+    
+    .login-card.with-lock-warning .login-form-container {
+      padding: 15px 12px;
+    }
+    
+    .attempts-warning {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+    
+    .warning-icon {
+      margin-bottom: 8px;
+    }
+    
+    .countdown-container {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+    
+    .countdown-container p {
+      margin-bottom: 5px;
+    }
+    
+    .locked-account-warning {
+      padding: 8px;
+    }
+  }
+  
+  /* Ajustements pour les petits écrans en hauteur */
+  @media (max-height: 700px) {
+    .login-form-container {
+      padding: 20px;
+    }
+    
+    .login-card.with-lock-warning .login-form-container {
+      padding: 15px;
+    }
+    
+    .logo {
+      height: 80px;
+    }
+    
+    .locked-account-warning + .logo-container .logo {
+      height: 70px;
+    }
+    
+    .title {
+      font-size: 22px;
+      margin-bottom: 8px;
+    }
+    
+    .subtitle {
+      font-size: 13px;
+    }
+    
+    .form-input {
+      padding: 10px 35px;
+    }
+    
+    .btn-submit, .btn-rfid {
+      padding: 10px;
+    }
+    
+    .locked-account-warning {
+      padding: 10px;
+      margin-bottom: 12px;
+    }
+    
+    .locked-account-warning ~ form .form-group {
+      margin-bottom: 10px;
+    }
+  }

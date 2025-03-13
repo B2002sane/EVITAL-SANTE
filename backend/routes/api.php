@@ -55,6 +55,9 @@ Route::get('chambres-disponibles', [ChambreController::class, 'chambresDisponibl
 Route::get('chambres/{id}/statut', [ChambreController::class, 'statutOccupation']);
 
 
+// Route pour obtenir les patients non hospitalisés
+Route::get('/patients/non-hospitalises', [ChambreController::class, 'getPatientsNonHospitalises']);
+
 
 //use App\Http\Controllers\ConstanteVitaleController;
 
