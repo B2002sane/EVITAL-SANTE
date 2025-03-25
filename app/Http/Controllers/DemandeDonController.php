@@ -8,6 +8,9 @@ use App\Models\Utilisateur;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Carbon\Carbon;
+use App\Mail\AppelDonNotification;
+use Illuminate\Support\Facades\Mail;
+
 
 class DemandeDonController extends Controller
 {
@@ -38,33 +41,92 @@ class DemandeDonController extends Controller
         return response()->json(['demandesDon' => $demandesDon]);
     }
 
-    /**
+
+    //afficher tous les demande de don complete
+    public function indexAll()
+    {
+        $demandesDon = DemandeDon::with(['medecin', 'donneur'])
+            ->get();
+
+        return response()->json(['demandesDon' => $demandesDon]);
+    }
+
+
+    // /**
+    //  * Créer une nouvelle demande de don
+    //  */
+    // public function store(Request $request)
+    // {
+    //     $validator = Validator::make($request->all(), [
+    //         // 'medecinId' => 'required|exists:utilisateurs,_id',
+    //         'groupeSanguin' => 'required|string|in:A+,A-,B+,B-,AB+,AB-,O+,O-',
+    //         // 'dateDemande' => 'required|date'
+    //     ]);
+
+    //     if ($validator->fails()) {
+    //         return response()->json(['errors' => $validator->errors()], 422);
+    //     }
+
+    //     // $error = $this->verifierMedecin($request->medecinId);
+    //     // if ($error) return $error;
+
+    //     $demandeDon = DemandeDon::create([
+    //         // 'medecinId' => $request->medecinId,
+    //         'groupeSanguin' => $request->groupeSanguin,
+    //         // 'dateDemande' => $request->dateDemande,
+    //         'status' => 'EN_COURS'
+    //     ]);
+
+    //     return response()->json(['demandeDon' => $demandeDon], 201);
+    // }
+
+
+
+
+
+
+
+        /**
      * Créer une nouvelle demande de don
      */
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'medecinId' => 'required|exists:utilisateurs,_id',
             'groupeSanguin' => 'required|string|in:A+,A-,B+,B-,AB+,AB-,O+,O-',
-            'dateDemande' => 'required|date'
         ]);
 
         if ($validator->fails()) {
             return response()->json(['errors' => $validator->errors()], 422);
         }
 
-        $error = $this->verifierMedecin($request->medecinId);
-        if ($error) return $error;
-
         $demandeDon = DemandeDon::create([
-            'medecinId' => $request->medecinId,
             'groupeSanguin' => $request->groupeSanguin,
-            'dateDemande' => $request->dateDemande,
             'status' => 'EN_COURS'
         ]);
 
+        // Récupérer les donneurs avec le même groupe sanguin
+        $donneurs = Utilisateur::where('groupeSanguin', $request->groupeSanguin)
+                            ->where('role', 'DONNEUR')
+                            ->get();
+
+        // Envoyer un email à chaque donneur
+        foreach ($donneurs as $donneur) {
+            Mail::to($donneur->email)->send(new AppelDonNotification($demandeDon));
+        }
+
         return response()->json(['demandeDon' => $demandeDon], 201);
     }
+
+
+
+
+
+
+
+
+
+
+
 
     /**
      * Afficher une demande de don spécifique
@@ -92,9 +154,6 @@ class DemandeDonController extends Controller
         if (!$demandeDon) {
             return response()->json(['message' => 'Demande de don non trouvée'], 404);
         }
-
-        $error = $this->verifierMedecin($demandeDon->medecinId);
-        if ($error) return $error;
 
         $validator = Validator::make($request->all(), [
             'groupeSanguin' => 'sometimes|string|in:A+,A-,B+,B-,AB+,AB-,O+,O-',
@@ -127,10 +186,6 @@ class DemandeDonController extends Controller
         if (!$demandeDon) {
             return response()->json(['message' => 'Demande de don non trouvée'], 404);
         }
-
-        $error = $this->verifierMedecin($demandeDon->medecinId);
-        if ($error) return $error;
-
         if ($demandeDon->donneurId) {
             return response()->json(['message' => 'Impossible de supprimer une demande déjà acceptée'], 422);
         }

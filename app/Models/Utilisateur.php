@@ -26,6 +26,7 @@ class Utilisateur extends Model implements AuthenticatableContract, JWTSubject
         'matricule',
         'photo',
         'status',
+        'adresse',
 
         # spécifique aux patients
         'dateNaissance',

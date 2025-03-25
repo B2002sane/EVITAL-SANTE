@@ -302,4 +302,24 @@ class ChambreController extends Controller
             'patients' => $chambre->patients
         ]);
     }
+
+
+      /**
+     * Obtenir les patients non hospitalisés
+     */
+    public function getPatientsNonHospitalises()
+    {
+        $patients = Utilisateur::where('hospitalisation', false)
+                                ->where('role', 'PATIENT')
+                                ->get();
+    
+        if ($patients->isEmpty()) {
+            return response()->json(['patients' => []], 200);
+        }
+    
+        return response()->json(['patients' => $patients]);
+    }
+
+
+
 }

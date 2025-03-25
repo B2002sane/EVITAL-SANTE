@@ -2,52 +2,42 @@
 
 namespace App\Mail;
 
-use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
+
 use Illuminate\Mail\Mailable;
-use Illuminate\Mail\Mailables\Content;
-use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
+use App\Models\RendezVous;
 
 class ConfirmationRendezVousNotification extends Mailable
 {
-    use Queueable, SerializesModels;
+    use SerializesModels;
+
+    public $rendezVous;
 
     /**
      * Create a new message instance.
-     */
-    public function __construct()
-    {
-        //
-    }
-
-    /**
-     * Get the message envelope.
-     */
-    public function envelope(): Envelope
-    {
-        return new Envelope(
-            subject: 'Confirmation Rendez Vous Notification',
-        );
-    }
-
-    /**
-     * Get the message content definition.
-     */
-    public function content(): Content
-    {
-        return new Content(
-            view: 'view.name',
-        );
-    }
-
-    /**
-     * Get the attachments for the message.
      *
-     * @return array<int, \Illuminate\Mail\Mailables\Attachment>
+     * @param  \App\Models\RendezVous  $rendezVous
+     * @return void
      */
-    public function attachments(): array
+    public function __construct(RendezVous $rendezVous)
     {
-        return [];
+        $this->rendezVous = $rendezVous;
     }
+
+    /**
+     * Build the message.
+     *
+     * @return $this
+     */
+
+     public function build()
+     {
+         return $this->subject('Votre rendez-vous avec le médecin')
+                     ->view('emails.rendezvousconfirmer') // Assurez-vous que le chemin est correct
+                     ->with([
+                         'rendezVous' => $this->rendezVous,
+                     ]);
+     }
+
 }
+

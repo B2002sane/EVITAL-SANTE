@@ -65,6 +65,7 @@ Route::get('/rendez-vous/date/{date}', [RendezVousController::class, 'indexByDat
 # routes pour les demandes de don
 use App\Http\Controllers\DemandeDonController;
 
+Route::get('demandes-don', [DemandeDonController::class, 'indexAll']);
 Route::get('medecins/{medecinId}/demandes-don', [DemandeDonController::class, 'index']);
 Route::post('demandes-don', [DemandeDonController::class, 'store']);
 Route::get('demandes-don/{id}', [DemandeDonController::class, 'show']);
@@ -87,6 +88,9 @@ Route::post('chambres/{id}/assigner-lit', [ChambreController::class, 'assignerLi
 Route::post('chambres/{id}/liberer-lit', [ChambreController::class, 'libererLit']);
 Route::get('chambres-disponibles', [ChambreController::class, 'chambresDisponibles']);
 Route::get('chambres/{id}/statut', [ChambreController::class, 'statutOccupation']);
+
+// Route pour obtenir les patients non hospitalisés
+Route::get('/patients/non-hospitalises', [ChambreController::class, 'getPatientsNonHospitalises']);
 
 
 

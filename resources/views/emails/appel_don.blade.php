@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <title>Nouveau rendez-vous créé</title>
+    <title>Appel à la donation de sang</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -39,20 +39,14 @@
 </head>
 <body>
     <div class="container">
-        <h1>Nouveau rendez-vous médical</h1>
-        
-        <p>Bonjour {{ $rendezVous->patient->nom }} {{ $rendezVous->patient->prenom }},</p>
-        
-        <p>Un rendez-vous a été planifié avec Dr. {{ $medecin->nom }} {{ $medecin->prenom }}.</p>
-        
-        <h2>Détails du rendez-vous :</h2>
-        <ul>
-            <li><strong>Date :</strong> {{ date('d/m/Y H:i', strtotime($date)) }}</li>
-            <li><strong>Motif :</strong> {{ $motif }}</li>
-        </ul>
-        
-        <p>En cas d'empêchement, veuillez nous contacter dès que possible.</p>
-        
+        <h1>Appel à la donation de sang</h1>
+
+        <p>Bonjour,</p>
+
+        <p>Un appel à la donation de sang a été lancé pour le groupe sanguin {{ $demandeDon->groupeSanguin }}.</p>
+
+        <p>Votre aide est précieuse. Merci de vous présenter dès que possible pour effectuer votre don.</p>
+
         <div class="footer">
             <p>Cordialement,<br>
             L'équipe de la clinique</p>

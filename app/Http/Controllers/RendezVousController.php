@@ -2,13 +2,14 @@
 
 namespace App\Http\Controllers;
 
-
+use App\Mail\ConfirmationRendezVousNotification;
 use App\Models\RendezVous;
 use App\Models\Utilisateur;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\RendezVousNotification;    
+
 
 class RendezVousController extends Controller
 {
@@ -76,6 +77,7 @@ class RendezVousController extends Controller
         $rendezVous->load(['patient', 'medecin']);
 
         // Envoyer un email au patient
+        
         Mail::to($rendezVous->patient->email)->send(new RendezVousNotification($rendezVous));
 
         return response()->json(['rendezVous' => $rendezVous], 201);
@@ -245,8 +247,10 @@ class RendezVousController extends Controller
 
         $rendezVous->update(['status' => 'confirme']);
         
-        // Envoyer un email de confirmation au patient
-        // Mail::to($rendezVous->patient->email)->send(new ConfirmationRendezVousNotification($rendezVous));
+        
+
+         // Envoyer un email de confirmation au patient
+         Mail::to($rendezVous->patient->email)->send(new ConfirmationRendezVousNotification($rendezVous));
 
         return response()->json(['rendezVous' => $rendezVous, 'message' => 'Demande de rendez-vous acceptée']);
     }

@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Str;
 
+
 class UtilisateurController extends Controller
 {
 
@@ -32,16 +33,26 @@ class UtilisateurController extends Controller
     }
 
 
-
-
     /**
-     * Afficher la liste des utilisateurs avec les statistiques
+     * Afficher la liste des utilisateurs avec les statistiques et option de filtrage par rôle et archive
      */
-    public function index()
+    public function index(Request $request)
     {
         try {
-            // Récupération des utilisateurs non archivés
-            $utilisateurs = Utilisateur::where('archive', false)->get();
+            // Récupération des paramètres de filtrage par rôle
+            $roles = $request->query('role');
+
+            // Construction de la requête de base (exclure les utilisateurs archivés)
+            $query = Utilisateur::where('archive', false);
+
+            // Appliquer le filtre par rôle si un ou plusieurs rôles sont spécifiés
+            if ($roles) {
+                $rolesArray = explode(',', $roles); // Convertir la chaîne en tableau si séparé par des virgules
+                $query->whereIn('role', $rolesArray);
+            }
+
+            // Exécution de la requête
+            $utilisateurs = $query->get();
 
             // Calcul des statistiques
             $stats = [
@@ -53,10 +64,7 @@ class UtilisateurController extends Controller
             ];
 
             // Masquer le mot de passe pour chaque utilisateur
-            $utilisateurs = $utilisateurs->map(function ($utilisateur) {
-                $utilisateur->makeHidden(['password', 'remember_token']);
-                return $utilisateur;
-            });
+            $utilisateurs = $utilisateurs->makeHidden(['password', 'remember_token']);
 
             return response()->json([
                 'status' => true,
@@ -73,6 +81,11 @@ class UtilisateurController extends Controller
         }
     }
 
+
+
+
+
+
     /**
      * Créer un nouvel utilisateur
      */
@@ -86,8 +99,9 @@ class UtilisateurController extends Controller
                 'telephone' => 'required|string|unique:utilisateurs,telephone',
                 'email' => 'required|email|unique:utilisateurs,email',
                 'password' => 'required|string|min:6',
-                'role' => ['required', Rule::in(['PATIENT', 'MEDECIN', 'MEDECIN_CHEF', 'DONNEUR'])],
+                'role' => ['required', Rule::in(['PATIENT', 'MEDECIN', 'SAGE_FEMME','INFIRMIER','MEDECIN_CHEF', 'DONNEUR'])],
                 'genre' => ['required', Rule::in(['HOMME', 'FEMME'])],
+                'adresse' => 'nullable|string',
     
                 'photo' => 'nullable|string',
 
@@ -99,10 +113,10 @@ class UtilisateurController extends Controller
                 ],
                 'categorie' => [
                     'required_if:role,PATIENT',
-                    Rule::in(['FEMME_ENCEINTE', 'PERSONNE_AGEE', 'MALADE_CHRONIQUE'])
+                    Rule::in(['FEMME_ENCEINTE', 'PERSONNE_AGEE', 'MALADE_CHRONIQUE', 'ENFANT', 'AUTRE'])
                 ],
                 'poids' => 'nullable|numeric|min:0',
-                'codeRfid' => 'required_if:role,MEDECIN,MEDECIN_CHEF|string|unique:utilisateurs,codeRfid|nullable',
+                'codeRfid' => 'required_if:role,MEDECIN,SAGE_FEMME,INFIRMIER,MEDECIN_CHEF|string|unique:utilisateurs,codeRfid|nullable',
             ], [
                 'required' => 'Le champ :attribute est obligatoire',
                 'email' => 'Le format de l\'email est invalide',
@@ -203,8 +217,9 @@ class UtilisateurController extends Controller
                 'telephone' => ['string', Rule::unique('utilisateurs')->ignore($id)],
                 'email' => ['email', Rule::unique('utilisateurs')->ignore($id)],
                 'password' => 'nullable|string|min:6',
-                'role' => [Rule::in(['PATIENT', 'MEDECIN', 'INFIRMIER','MEDECIN_CHEF', 'DONNEUR'])],
+                'role' => [Rule::in(['PATIENT', 'MEDECIN', 'SAGE_FEMME','INFIRMIER','MEDECIN_CHEF', 'DONNEUR'])],
                 'genre' => [Rule::in(['HOMME', 'FEMME'])],
+                'adresse' => 'nullable|string',
                 'photo' => 'nullable|string',
                 'dateNaissance' => 'date|nullable',
                 'groupeSanguin' => [Rule::in(['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'])],

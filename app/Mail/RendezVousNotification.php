@@ -29,14 +29,18 @@ class RendezVousNotification extends Mailable
      *
      * @return $this
      */
-    public function build()
-{
-    return $this->subject('Votre rendez-vous avec le médecin')
-                ->view('rendezvous')
-                ->with([
-                    'rendezVous' => $this->rendezVous,  // Assure-toi que la variable est bien passée
-                ]);
-}
+
+     public function build()
+     {
+         return $this->subject('Votre rendez-vous avec le médecin')
+                     ->view('emails.rendezvous') // Assurez-vous que le chemin est correct
+                     ->with([
+                         'rendezVous' => $this->rendezVous,
+                     ]);
+     }
+     
+     
+
 
 }
 
