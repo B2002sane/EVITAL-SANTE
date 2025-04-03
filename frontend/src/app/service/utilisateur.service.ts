@@ -1,9 +1,33 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable,  tap } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { DossierMedicalService } from './dossier-medical.service'; // Assurez-vous d'importer le service DossierMedicalService
+
+interface Statistiques {
+  total_patients: number;
+  total_donneurs: number;
+  total_medecins: number;
+  total_medecins_chef: number;
+  total_utilisateurs: number;
+}
+
+interface ApiResponse {
+  status: boolean;
+  message: string;
+  statistiques: Statistiques;
+  utilisateurs: Utilisateur[];
+  data: Utilisateur;
+}
 
 export interface Utilisateur {
+medecinTraitant: any;
+contactUrgence: any;
+dernierRdv: any;
+  actif: boolean;
+  dateCreation: boolean;
+  status: Utilisateur;
+  data: Utilisateur;
   id?: string;
   nom: string;
   prenom: string;
@@ -29,40 +53,62 @@ export interface Utilisateur {
 export class UtilisateurService {
   private apiUrl = 'http://localhost:8000/api/utilisateurs';
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, public dossierMedicalService: DossierMedicalService) {}
 
   /** Récupérer tous les utilisateurs */
-  getUtilisateurs(): Observable<Utilisateur[]> {
-    return this.http.get<Utilisateur[]>(this.apiUrl);
+  getUtilisateurs(): Observable<ApiResponse[]> {
+    return this.http.get<ApiResponse[]>(this.apiUrl);
   }
 
-
   /** Récupérer les utilisateurs par rôle */
-getUtilisateursParRoles(roles: string[]): Observable<Utilisateur[]> {
-  const rolesQuery = roles.join(','); // Convertir le tableau en une chaîne séparée par des virgules
-  return this.http.get<{ data: Utilisateur[] }>(`${this.apiUrl}/?role=${rolesQuery}`).pipe(
-    map(response => response.data) // Extraire "data"
-  );
-}
-
+  getUtilisateursParRoles(roles: string[]): Observable<Utilisateur[]> {
+    const rolesQuery = roles.join(',');
+    return this.http.get<{ data: Utilisateur[] }>(`${this.apiUrl}/?role=${rolesQuery}`).pipe(
+      map(response => response.data)
+    );
+  }
 
   /** Récupérer tous les patients */
   getPatients(): Observable<Utilisateur[]> {
     return this.http.get<{ data: Utilisateur[] }>(`${this.apiUrl}?role=PATIENT`).pipe(
-      map(response => response.data) // Extraction de "data"
+      map(response => response.data)
     );
   }
-
 
   /** Récupérer un utilisateur par ID */
   getUtilisateurById(id: string): Observable<Utilisateur> {
     return this.http.get<Utilisateur>(`${this.apiUrl}/${id}`);
   }
 
-  /** Créer un nouvel utilisateur */
-  createUtilisateur(utilisateur: Utilisateur): Observable<Utilisateur> {
-    return this.http.post<Utilisateur>(this.apiUrl, utilisateur);
+
+
+  /** Récupérer un utilisateur par ID */
+  getUtilisateurByIdEdit(id: string): Observable<ApiResponse> {
+    return this.http.get<ApiResponse>(`${this.apiUrl}/${id}`);
   }
+
+
+
+
+
+  /** Créer un nouvel utilisateur avec dossier médical (pour les patients) */
+
+createUtilisateur(utilisateur: Utilisateur): Observable<Utilisateur> {
+
+  // Création de l'utilisateur via l'API
+  return this.http.post<any>(this.apiUrl, utilisateur).pipe(
+    map(response => {
+      // Le contrôleur backend s'occupe maintenant de la création du dossier médical
+      // pour les patients, donc on peut simplement retourner la réponse
+      return response.data;
+    }),
+    // Log pour débogage
+    tap(result => console.log('Utilisateur créé:', result))
+  );
+}
+
+
+
 
   /** Mettre à jour un utilisateur */
   updateUtilisateur(id: string, utilisateur: Utilisateur): Observable<Utilisateur> {

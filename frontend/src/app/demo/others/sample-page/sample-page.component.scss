@@ -1,77 +1,123 @@
+/* gestion-patient.component.scss */
 
-/* ajout-patient.component.scss */
 
-.add-patient {
+.container {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  max-width: 1300px;
+  width: 100%;
+}
+
+h2 {
+  color: #058789;
+  text-align: left;
+  margin-bottom: 30px;
+}
+
+h4 {
+  color: #058789;
+  margin-top: 20px;
+  margin-bottom: 15px;
+}
+
+.form-group {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  margin-bottom: 25px;
+}
+
+.form-group label {
+  font-weight: bold;
+  display: block;
+  margin-bottom: 5px;
+}
+
+input, select {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ced4da;
+  border-radius: 5px;
+  margin-bottom: 25px;
+}
+
+button {
+  width: 20%;
+  background: #058789;
+  border: none;
+  padding: 12px;
+  color: white;
+  font-size: 16px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: 0.3s;
+  margin: 25px;
+}
+
+button:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
+
+button:hover {
+  opacity: 0.8;
+}
+
+.annuler {
+  background: #dc3546b6;
+}
+
+.error {
+  color: red;
+  font-size: 12px;
+  margin-top: 5px;
+}
+
+.profile-image-container {
+  display: flex;
+  justify-content: left;
+  margin-bottom: 10px;
   
-    box-shadow: 0 4px 10px rgba(2, 2 ,0, 0.1);
+}
 
 
-  }
-  
+.rounded-circle{
+  background-color: #dbdbdb;
+}
+
+.btn-outline-primary {
+  color: #058789;
+  border-color: #058789;
+  background-color: transparent;
+  padding: 5px 10px;
+  font-size: 14px;
+  transition: all 0.3s;
+}
+
+.btn-outline-primary:hover {
+  background-color: #058789;
+  color: white;
+}
+
+/* Style pour l'indicateur de chargement */
+.spinner-border {
+  width: 3rem;
+  height: 3rem;
+  margin: 20px auto;
+  display: block;
+  color: #058789;
+}
+
+/* Style responsive */
+@media (max-width: 768px) {
   .container {
-    background: white;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    max-width: 900px;
-    width: 100%;
-  }
-  
-  h2 {
-    color: #058789;
-    text-align: left;
-    margin-bottom: 30px;
-  }
-  
-  .form-group {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    margin-bottom: 25px;
-  }
-  
-  .form-group label {
-    font-weight: bold;
-    display: block;
-    margin-bottom: 5px;
-  }
-  
-  input, select {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid #ced4da;
-    border-radius: 5px;
-    margin-bottom: 25px;
+    padding: 15px;
   }
   
   button {
-    width: 20%;
-    background: #058789;
-    border: none;
-    padding: 12px;
-    color: white;
-    font-size: 16px;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: 0.3s;
-    margin: 25px;
+    width: 45%;
+    margin: 10px 5px;
   }
-
-  button:disabled {
-    background: #ccc;
-    cursor: not-allowed;
-  }
-  
-  button:hover {
-    opacity: 0.8;
-  }
-  .annuler {
-    background: #dc3546b6;
-  }
-  
-  .error {
-    color: red;
-    font-size: 12px;
-    margin-top: 5px;
-  }
-  
+}

@@ -2,9 +2,19 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
+
 // Project import
 import { AdminComponent } from './theme/layouts/admin-layout/admin-layout.component';
 import { GuestLayoutComponent } from './theme/layouts/guest-layout/guest-layout.component';
+
+
+
+
+
+
+
+
+
 
 const routes: Routes = [
   {
@@ -67,6 +77,13 @@ const routes: Routes = [
         path: 'reset-password',
         loadComponent:() =>
           import('./demo/forgot-password/forgot-password.component').then((c) => c.ForgotPasswordComponent)
+      },
+
+
+     { 
+        path: 'dossier-medical/:id',
+        loadComponent: () =>
+          import('./demo/dossier-medical/dossier-medical.component').then((c) => c.DossierMedicalComponent)
       }
      
 
@@ -104,5 +121,9 @@ const routes: Routes = [
 @NgModule({
   imports: [RouterModule.forRoot(routes)],
   exports: [RouterModule]
+
+
+  
+
 })
 export class AppRoutingModule {}

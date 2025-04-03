@@ -49,7 +49,10 @@ export default [
       ],
       // Disable the prefer-standalone rule
       '@angular-eslint/prefer-standalone': 'off'
-    }
+    },
+
+    "@typescript-eslint/no-explicit-any": "off"
+  
   },
   ...compat.extends('plugin:@angular-eslint/template/recommended').map((config) => ({
     ...config,

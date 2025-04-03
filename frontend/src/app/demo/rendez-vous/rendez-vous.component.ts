@@ -1,59 +1,42 @@
-// rendez-vous.component.ts
-import { Component, NgModule, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { RendezVousService, RendezVous } from '../../service/rendez-vous.service';
-import { formatDate } from '@angular/common';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-
-interface RendezVousExtended extends RendezVous {
-  patientNom?: string;
-  patientPrenom?: string;
-  medecinNom?: string;
-}
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-rendez-vous',
-  imports: [ CommonModule , FormsModule ],
+  standalone: true,
+  imports: [CommonModule, FormsModule],
   templateUrl: './rendez-vous.component.html',
   styleUrls: ['./rendez-vous.component.scss']
 })
 export class RendezVousComponent implements OnInit {
-  allRendezVous: RendezVousExtended[] = [];
-  filteredRendezVous: RendezVousExtended[] = [];
+  allRendezVous: RendezVous[] = [];
+  rendezVousAffiches: RendezVous[] = [];
   
+  // Filtres
   dateFilter: string = '';
   statusFilter: string = '';
-  viewMode: 'jour' | 'semaine' | 'mois' = 'jour';
+  periodeFilter: string = '';
   
-  currentPage: number = 1;
-  itemsPerPage: number = 10;
+  // Pagination
+  pageActuelle: number = 1;
+  itemsParPage: number = 6;
   totalPages: number = 1;
-  
-  // ID du médecin connecté (à remplacer par votre mécanisme d'authentification)
-  medecinId: string = 'id-du-medecin-connecte';
 
-  constructor(private rendezVousService: RendezVousService ) {}
+  constructor(private rendezVousService: RendezVousService) {}
 
   ngOnInit(): void {
-    // Initialiser avec la date d'aujourd'hui
-    this.dateFilter = formatDate(new Date(), 'yyyy-MM-dd', 'fr');
-    this.loadMedecinRendezVous();
+    this.loadAllRendezVous();
   }
 
-  loadMedecinRendezVous(): void {
-    this.rendezVousService.getByMedecin(this.medecinId).subscribe({
+  /** Récupérer tous les rendez-vous **/
+  loadAllRendezVous(): void {
+    this.rendezVousService.getAll().subscribe({
       next: (response) => {
-        // Dans une vraie application, vous récupéreriez les informations patient
-        // à partir d'un autre service ou API
-        this.allRendezVous = response.rendezVous.map(rdv => {
-          return {
-            ...rdv,
-            patientNom: 'Nom Patient', // À remplacer par les vraies données
-            patientPrenom: 'Prénom Patient', // À remplacer par les vraies données
-            medecinNom: 'Dr. Connecté' // À remplacer par les vraies données
-          };
-        });
-        this.applyFilters();
+        this.allRendezVous = response.rendezVous;
+        this.appliquerFiltres();
       },
       error: (error) => {
         console.error('Erreur lors du chargement des rendez-vous', error);
@@ -61,100 +44,66 @@ export class RendezVousComponent implements OnInit {
     });
   }
 
-  loadPendingRequests(): void {
-    this.rendezVousService.getPendingRequests(this.medecinId).subscribe({
-      next: (response) => {
-        this.allRendezVous = response.demandes.map(rdv => {
-          return {
-            ...rdv,
-            patientNom: 'Nom Patient', // À remplacer par les vraies données
-            patientPrenom: 'Prénom Patient', // À remplacer par les vraies données
-            medecinNom: 'Dr. Connecté' // À remplacer par les vraies données
-          };
-        });
-        this.statusFilter = 'en_attente';
-        this.applyFilters();
-      },
-      error: (error) => {
-        console.error('Erreur lors du chargement des demandes en attente', error);
-      }
-    });
-  }
+  /** Appliquer les filtres sur les rendez-vous **/
+  appliquerFiltres(): void {
+    let resultatsFiltres = [...this.allRendezVous];
 
-  applyFilters(): void {
-    let filtered = [...this.allRendezVous];
-    
     // Filtre par date
     if (this.dateFilter) {
-      const filterDate = new Date(this.dateFilter).toISOString().split('T')[0];
-      filtered = filtered.filter(rdv => {
-        const rdvDate = new Date(rdv.date).toISOString().split('T')[0];
-        return rdvDate === filterDate;
+      const dateRecherche = new Date(this.dateFilter);
+      resultatsFiltres = resultatsFiltres.filter(rdv => {
+        const dateRdv = new Date(rdv.date);
+        return dateRdv.toDateString() === dateRecherche.toDateString();
       });
     }
-    
+
     // Filtre par statut
     if (this.statusFilter) {
-      filtered = filtered.filter(rdv => rdv.status === this.statusFilter);
+      resultatsFiltres = resultatsFiltres.filter(rdv => rdv.status === this.statusFilter);
     }
-    
+
+    // Filtre par période
+    if (this.periodeFilter) {
+      const maintenant = new Date();
+      const dateDebut = new Date();
+      
+      if (this.periodeFilter === 'jour') {
+        // Aujourd'hui
+      } else if (this.periodeFilter === 'semaine') {
+        // Première jour de la semaine
+        dateDebut.setDate(maintenant.getDate() - maintenant.getDay());
+      } else if (this.periodeFilter === 'mois') {
+        // Premier jour du mois
+        dateDebut.setDate(1);
+      }
+      
+      resultatsFiltres = resultatsFiltres.filter(rdv => {
+        const dateRdv = new Date(rdv.date);
+        return dateRdv >= dateDebut && dateRdv <= maintenant;
+      });
+    }
+
     // Appliquer la pagination
-    this.totalPages = Math.ceil(filtered.length / this.itemsPerPage);
-    const startIndex = (this.currentPage - 1) * this.itemsPerPage;
-    this.filteredRendezVous = filtered.slice(startIndex, startIndex + this.itemsPerPage);
+    this.totalPages = Math.ceil(resultatsFiltres.length / this.itemsParPage);
+    const debut = (this.pageActuelle - 1) * this.itemsParPage;
+    const fin = debut + this.itemsParPage;
+    this.rendezVousAffiches = resultatsFiltres.slice(debut, fin);
   }
 
-  filterByStatus(status: string): void {
-    if (status === 'en_attente') {
-      this.loadPendingRequests();
-    } else {
-      this.statusFilter = status;
-      this.currentPage = 1;
-      this.applyFilters();
-    }
+  /** Filtrer uniquement par statut (pour le bouton Demandes en Attente) **/
+  filtrerParStatus(status: string): void {
+    this.statusFilter = status;
+    this.pageActuelle = 1;
+    this.appliquerFiltres();
   }
 
-  acceptRendezVous(id: string): void {
-    this.rendezVousService.acceptRequest(id).subscribe({
-      next: (response) => {
-        console.log('Rendez-vous accepté:', response.message);
-        // Mettre à jour l'UI
-        const rdvIndex = this.allRendezVous.findIndex(rdv => rdv._id === id);
-        if (rdvIndex !== -1) {
-          this.allRendezVous[rdvIndex].status = 'confirme';
-          this.applyFilters();
-        }
-      },
-      error: (error) => {
-        console.error('Erreur lors de l\'acceptation du rendez-vous', error);
-      }
-    });
+  /** Changer de page **/
+  changerPage(page: number): void {
+    this.pageActuelle = page;
+    this.appliquerFiltres();
   }
 
-  refuseRendezVous(id: string): void {
-    // Note: Votre API ne semble pas avoir d'endpoint spécifique pour refuser
-    // On utilise donc la méthode update pour changer le statut à 'annule'
-    this.rendezVousService.update(id, { status: 'annule' }).subscribe({
-      next: (response) => {
-        console.log('Rendez-vous refusé');
-        // Mettre à jour l'UI
-        const rdvIndex = this.allRendezVous.findIndex(rdv => rdv._id === id);
-        if (rdvIndex !== -1) {
-          this.allRendezVous[rdvIndex].status = 'annule';
-          this.applyFilters();
-        }
-      },
-      error: (error) => {
-        console.error('Erreur lors du refus du rendez-vous', error);
-      }
-    });
-  }
-
-  changePage(page: number): void {
-    this.currentPage = page;
-    this.applyFilters();
-  }
-
+  /** Obtenir le libellé du statut **/
   getStatusLabel(status: string): string {
     switch (status) {
       case 'en_attente': return 'En attente';
@@ -165,8 +114,117 @@ export class RendezVousComponent implements OnInit {
     }
   }
 
-  filterByDate(): void {
-    this.loadMedecinRendezVous(); // Recharger les RDV avec le filtre de date
-    this.applyFilters();
+
+
+
+
+
+
+  /** Accepter un rendez-vous en attente **/
+  accepterRendezVous(rdvId: string): void {
+    // Affichage d'une boîte de dialogue de confirmation
+    Swal.fire({
+      title: 'Êtes-vous sûr ?',
+      text: "Voulez-vous vraiment accepter ce rendez-vous ?",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Oui',
+      cancelButtonText: 'Non',
+      reverseButtons: true
+    }).then((result) => {
+      // Si l'utilisateur confirme
+      if (result.isConfirmed) {
+        this.rendezVousService.acceptRequest(rdvId).subscribe({
+          next: (response) => {
+            console.log('Rendez-vous accepté:', response.message);
+            
+            // Mettre à jour le statut dans la liste locale
+            this.updateRendezVousStatus(rdvId, 'confirme');
+            
+            // Rafraîchir la liste
+            this.loadAllRendezVous();
+
+            // Affichage d'un message de succès
+            Swal.fire('Succès!', 'Rendez-vous accepté avec succès!', 'success');
+          },
+          error: (error) => {
+            console.error('Erreur lors de l\'acceptation du rendez-vous', error);
+            // Affichage d'un message d'erreur en cas d'échec
+            Swal.fire('Erreur!', 'Impossible d\'accepter ce rendez-vous.', 'error');
+          }
+        });
+      } else {
+        // Si l'utilisateur annule l'action
+        Swal.fire('Annulé', 'Le rendez-vous n\'a pas été accepté.', 'info');
+      }
+    });
   }
+
+
+
+
+      
+    /** Annuler un rendez-vous **/
+    annulerRendezVous(rdvId: string): void {
+      // Affichage d'une boîte de dialogue de confirmation
+      Swal.fire({
+        title: 'Êtes-vous sûr ?',
+        text: "Voulez-vous vraiment annuler ce rendez-vous ?",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Oui',
+        cancelButtonText: 'Non',
+        reverseButtons: true
+      }).then((result) => {
+        // Si l'utilisateur confirme
+        if (result.isConfirmed) {
+          // Appeler le service pour annuler le rendez-vous
+          this.rendezVousService.update(rdvId, { status: 'annule' }).subscribe({
+            next: (response) => {
+              console.log('Rendez-vous annulé');
+              
+              // Mettre à jour le statut dans la liste locale
+              this.updateRendezVousStatus(rdvId, 'annule');
+              
+              // Rafraîchir la liste
+              this.loadAllRendezVous();
+
+              // Affichage d'un message de succès
+              Swal.fire('Succès!', 'Le rendez-vous a été annulé avec succès!', 'success');
+            },
+            error: (error) => {
+              console.error('Erreur lors de l\'annulation du rendez-vous', error);
+              // Affichage d'un message d'erreur en cas d'échec
+              Swal.fire('Erreur!', 'Impossible d\'annuler ce rendez-vous.', 'error');
+            }
+          });
+        } else {
+          // Si l'utilisateur annule l'action
+          Swal.fire('Annulé', 'Le rendez-vous n\'a pas été annulé.', 'info');
+        }
+      });
+    }
+
+
+
+
+  /** Mettre à jour le statut d'un rendez-vous dans les listes locales **/
+  private updateRendezVousStatus(rdvId: string, newStatus: 'confirme' | 'annule' | 'termine'): void {
+    // Mettre à jour dans la liste complète
+    const rdvIndex = this.allRendezVous.findIndex(rdv => rdv.id === rdvId);
+    if (rdvIndex !== -1) {
+      this.allRendezVous[rdvIndex].status = newStatus;
+    }
+    
+    // Mettre à jour dans la liste affichée
+    const rdvAfficheIndex = this.rendezVousAffiches.findIndex(rdv => rdv.id === rdvId);
+    if (rdvAfficheIndex !== -1) {
+      this.rendezVousAffiches[rdvAfficheIndex].status = newStatus;
+    }
+  }
+
+
+
+
+
 }

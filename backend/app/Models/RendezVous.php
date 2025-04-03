@@ -16,8 +16,7 @@ class RendezVous extends Model
         'date',
         'motif',
         'status',
-        'dossierMedicalId', // Champ pour lier à un dossier médical
-
+        'creePar'
     ];
 
 
@@ -33,10 +32,13 @@ class RendezVous extends Model
         return $this->belongsTo(Utilisateur::class, 'medecinId');
     }
 
-    # Relation avec le modelèle DossierMedical
-    public function dossierMedical()
+
+      # Relation avec le modelèle DossierMedical
+  /*  public function dossierMedical()
     {
         return $this->belongsTo(DossierMedical::class, 'dossierMedicalId');
 
-    }
+    } */
+
+
 }

@@ -15,9 +15,32 @@ class RendezVousController extends Controller
     /**
      * Afficher tous les rendez-vous
      */
-    public function index()
+        /**
+     * Afficher tous les rendez-vous avec possibilité de filtrer par date
+     */
+    public function index(Request $request)
     {
-        $rendezVous = RendezVous::with(['patient', 'medecin'])->get();
+        // Vérifier si un paramètre de date est présent dans la requête
+        if ($request->has('date')) {
+            $date = $request->query('date');
+            $rendezVous = RendezVous::with(['patient', 'medecin'])
+                ->where('date', $date)
+                ->get();
+        } else {
+            // Si aucune date n'est spécifiée, récupérer tous les rendez-vous
+            $rendezVous = RendezVous::with(['patient', 'medecin'])->get();
+        }
+
+        return response()->json(['rendezVous' => $rendezVous]);
+    }
+
+    //Afficher les rendez vous filtrer par date 
+    public function indexByDate($date)
+    {
+        $rendezVous = RendezVous::with(['patient', 'medecin'])
+            ->where('date', $date)
+            ->get();
+
         return response()->json(['rendezVous' => $rendezVous]);
     }
 
@@ -25,8 +48,8 @@ class RendezVousController extends Controller
 
 
 
-    /**
-     * Créer un nouveau rendez-vous
+   /**
+     * Créer un nouveau rendez-vous (par un médecin)
      */
     public function store(Request $request)
     {
@@ -42,30 +65,56 @@ class RendezVousController extends Controller
             return response()->json(['errors' => $validator->errors()], 422);
         }
 
-        // // Vérifier si le médecin est disponible à cette date
-        // $existingRdv = RendezVous::where('medecinId', $request->medecinId)
-        //     ->where('date', $request->date)
-        //     ->where('status', '!=', 'annule')
-        //     ->first();
+        // Pour un rendez-vous créé par un médecin, on le marque comme confirmé directement
+        $data = $request->all();
+        if (!isset($data['status'])) {
+            $data['status'] = 'confirme';
+        }
+        $data['creePar'] = 'medecin';
 
-        // if ($existingRdv) {
-        //     return response()->json([
-        //         'message' => 'Le médecin a déjà un rendez-vous à cette date'
-        //     ], 422);
-        // }
-
-        $rendezVous = RendezVous::create($request->all());
-
-
-        $rendezVous->load(['patient', 'medecin']); // Charger explicitement les relations
+        $rendezVous = RendezVous::create($data);
+        $rendezVous->load(['patient', 'medecin']);
 
         // Envoyer un email au patient
         Mail::to($rendezVous->patient->email)->send(new RendezVousNotification($rendezVous));
-            // Envoyer un email au patient
-       // Mail::to($rendezVous->patient->email)->send(new RendezVousNotification($rendezVous));
 
         return response()->json(['rendezVous' => $rendezVous], 201);
     }
+
+
+
+
+     /**
+     * Créer une demande de rendez-vous (par un patient)
+     */
+    public function demanderRendezVous(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'patientId' => 'required|exists:mongodb.utilisateurs,_id',
+            'medecinId' => 'required|exists:mongodb.utilisateurs,_id',
+            'date' => 'required|date',
+            'motif' => 'required|string',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
+
+        $data = $request->all();
+        $data['status'] = 'en_attente';
+        $data['creePar'] = 'patient';
+
+        $rendezVous = RendezVous::create($data);
+        $rendezVous->load(['patient', 'medecin']);
+
+       
+
+        return response()->json(['rendezVous' => $rendezVous, 'message' => 'Demande de rendez-vous envoyée avec succès'], 201);
+    }
+
+
+
+
 
 
 
@@ -84,6 +133,9 @@ class RendezVousController extends Controller
 
         return response()->json(['rendezVous' => $rendezVous]);
     }
+
+
+
 
     /**
      * Mettre à jour un rendez-vous
@@ -106,24 +158,12 @@ class RendezVousController extends Controller
             return response()->json(['errors' => $validator->errors()], 422);
         }
 
-        // // Si la date est modifiée, vérifier la disponibilité du médecin
-        // if ($request->has('date') && $request->date !== $rendezVous->date) {
-        //     $existingRdv = RendezVous::where('medecinId', $rendezVous->medecinId)
-        //         ->where('date', $request->date)
-        //         ->where('status', '!=', 'annule')
-        //         ->where('_id', '!=', $id)
-        //         ->first();
-
-        //     if ($existingRdv) {
-        //         return response()->json([
-        //             'message' => 'Le médecin a déjà un rendez-vous à cette date'
-        //         ], 422);
-        //     }
-        // }
-
         $rendezVous->update($request->all());
         return response()->json(['rendezVous' => $rendezVous]);
     }
+
+
+    
 
     /**
      * Supprimer un rendez-vous
@@ -140,9 +180,12 @@ class RendezVousController extends Controller
         return response()->json(['message' => 'Rendez-vous supprimé avec succès']);
     }
 
+
+
+
     /**
-     * Récupérer les rendez-vous d'un patient
-     */
+     * Récupérer les rendez-vous d'un patient verifie d'abord si c'est un patient     */
+
     public function getPatientRendezVous($patientId)
     {
         $rendezVous = RendezVous::with(['medecin'])
@@ -151,6 +194,10 @@ class RendezVousController extends Controller
 
         return response()->json(['rendezVous' => $rendezVous]);
     }
+    
+
+   
+
 
     /**
      * Récupérer les rendez-vous d'un médecin
@@ -163,4 +210,47 @@ class RendezVousController extends Controller
 
         return response()->json(['rendezVous' => $rendezVous]);
     }
+
+
+
+    /**
+     * Récupérer les demandes de rendez-vous en attente pour un médecin
+     */
+    public function getDemandesEnAttente($medecinId)
+    {
+        $rendezVous = RendezVous::with(['patient'])
+            ->where('medecinId', $medecinId)
+            ->where('status', 'en_attente')
+            ->where('creePar', 'patient')
+            ->get();
+
+        return response()->json(['demandes' => $rendezVous]);
+    }
+
+
+    /**
+     * Accepter une demande de rendez-vous
+     */
+    public function accepterDemande($id)
+    {
+        $rendezVous = RendezVous::with(['patient', 'medecin'])->find($id);
+        
+        if (!$rendezVous) {
+            return response()->json(['message' => 'Demande de rendez-vous non trouvée'], 404);
+        }
+
+        if ($rendezVous->status !== 'en_attente') {
+            return response()->json(['message' => 'Cette demande ne peut plus être acceptée'], 422);
+        }
+
+        $rendezVous->update(['status' => 'confirme']);
+        
+        // Envoyer un email de confirmation au patient
+        // Mail::to($rendezVous->patient->email)->send(new ConfirmationRendezVousNotification($rendezVous));
+
+        return response()->json(['rendezVous' => $rendezVous, 'message' => 'Demande de rendez-vous acceptée']);
+    }
+
+
+
 }

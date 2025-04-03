@@ -1,152 +1,268 @@
-  <div class="row">
-  <div class="col-sm-12">
-    <app-card cardClass="add-patient" cardTitle="Ajout d’un patient">
-          <!-- ajout-patient.component.html -->
-      <form [formGroup]="patientForm" (ngSubmit)="onSubmit()">
-        <h2>Ajout d’un patient</h2>
-        <div class="row">
-          <div class="form-group col-sm-6">
-            <label>Nom *</label>
-            <input type="text" formControlName="nom" placeholder="Nom">
-            <div *ngIf="f['nom'].touched && f['nom'].invalid" class="error">Le nom est requis.</div>
-          </div>
-          <div class="form-group col-sm-6">
-            <label>Prénom *</label>
-            <input type="text" formControlName="prenom" placeholder="Prénom">
-            <div *ngIf="f['prenom'].touched && f['prenom'].invalid" class="error">Le prénom est requis.</div>
-          </div>
+<div class="add-patient">
+  <div class="container">
+    <h2>{{ pageTitle }}</h2>
+    
+    <div *ngIf="isLoading" class="text-center">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Chargement...</span>
+      </div>
+      <p>Chargement des données...</p>
+    </div>
+    
+    <form [formGroup]="patientForm" (ngSubmit)="onSubmit()" *ngIf="!isLoading">
+      <!-- Photo de profil -->
+      <div class="mb-4 text-left">
+        <div class="profile-image-container">
+          <img 
+            [src]="patientForm.get('photo')?.value || ''" 
+            alt="" 
+            class="rounded-circle" 
+            style="width: 120px; height: 120px; object-fit: cover;">
         </div>
-
-        <div class="row">
-          <div class="form-group col-sm-6">
-            <label>Email *</label>
-            <input type="email" formControlName="email" placeholder="Email">
-            <div *ngIf="f['email'].touched && f['email'].invalid" class="error">Email invalide.</div>
-          </div>
-          
-          <div class="form-group col-sm-3">
-            <label>Téléphone *</label>
-            <input type="tel" formControlName="telephone" placeholder="Téléphone">
-            <div *ngIf="f['telephone'].touched && f['telephone'].invalid" class="error">
-              Téléphone invalide.
+        <div class="mt-2">
+          <label for="photoInput" class="btn btn-sm btn-outline-primary">
+            {{ isEditMode ? 'Changer la photo' : 'Ajouter une photo' }}
+          </label>
+          <input 
+            type="file" 
+            id="photoInput" 
+            style="display: none;" 
+            accept="image/*"
+            (change)="onPhotoChange($event)">
+        </div>
+      </div>
+      
+      <!-- Informations personnelles -->
+      <h4>Informations personnelles</h4>
+      <div class="row">
+        <div class="col-md-6">
+          <div class="form-group">
+            <label for="nom">Nom <span class="text-danger">*</span></label>
+            <input
+              type="text"
+              id="nom"
+              formControlName="nom"
+              class="form-control"
+              [ngClass]="{'is-invalid': f['nom'].touched && f['nom'].invalid}"
+            />
+            <div *ngIf="f['nom'].touched && f['nom'].invalid" class="error">
+              <div *ngIf="f['nom'].errors?.['required']">Le nom est requis.</div>
+              <div *ngIf="f['nom'].errors?.['minlength']">Le nom doit contenir au moins 2 caractères.</div>
             </div>
           </div>
-  
-          <div class="form-group col-sm-3">
-            <label>Date de Naissance *</label>
-            <input type="date" formControlName="dateNaissance" [max]="today">
-            <div *ngIf="f['dateNaissance'].touched && f['dateNaissance'].invalid" class="error">Date requise.</div>
+        </div>
+        
+        <div class="col-md-6">
+          <div class="form-group">
+            <label for="prenom">Prénom <span class="text-danger">*</span></label>
+            <input
+              type="text"
+              id="prenom"
+              formControlName="prenom"
+              class="form-control"
+              [ngClass]="{'is-invalid': f['prenom'].touched && f['prenom'].invalid}"
+            />
+            <div *ngIf="f['prenom'].touched && f['prenom'].invalid" class="error">
+              <div *ngIf="f['prenom'].errors?.['required']">Le prénom est requis.</div>
+              <div *ngIf="f['prenom'].errors?.['minlength']">Le prénom doit contenir au moins 2 caractères.</div>
+            </div>
           </div>
-
+        </div>
+      </div>
+      
+      <div class="row">
+        <div class="col-md-6">
+          <div class="form-group">
+            <label for="dateNaissance">Date de naissance <span class="text-danger">*</span></label>
+            <input
+              type="date"
+              id="dateNaissance"
+              formControlName="dateNaissance"
+              class="form-control"
+              [max]="today"
+              [ngClass]="{'is-invalid': f['dateNaissance'].touched && f['dateNaissance'].invalid}"
+            />
+            <div *ngIf="f['dateNaissance'].touched && f['dateNaissance'].invalid" class="error">
+              <div *ngIf="f['dateNaissance'].errors?.['required']">La date de naissance est requise.</div>
+            </div>
+          </div>
         </div>
         
-       <div class="row">
-        <div class="form-group col-sm-3">
-          <label>Genre *</label>
-          <select formControlName="genre">
-            <option value="">Sélectionner</option>
-            <option value="HOMME">Homme</option>
-            <option value="FEMME">Femme</option>
-          </select>
-          <div *ngIf="f['genre'].touched && f['genre'].invalid" class="error">Genre requis.</div>
+        <div class="col-md-6">
+          <div class="form-group">
+            <label for="genre">Genre <span class="text-danger">*</span></label>
+            <select
+              id="genre"
+              formControlName="genre"
+              class="form-control"
+              [ngClass]="{'is-invalid': f['genre'].touched && f['genre'].invalid}"
+            >
+              <option value="" disabled>Sélectionner</option>
+              <option value="HOMME">Homme</option>
+              <option value="FEMME">Femme</option>
+            </select>
+            <div *ngIf="f['genre'].touched && f['genre'].invalid" class="error">
+              <div *ngIf="f['genre'].errors?.['required']">Le genre est requis.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="row">
+        <div class="col-md-6">
+          <div class="form-group">
+            <label for="poids">Poids (kg) <span class="text-danger">*</span></label>
+            <input
+              type="number"
+              id="poids"
+              formControlName="poids"
+              class="form-control"
+              [ngClass]="{'is-invalid': f['poids'].touched && f['poids'].invalid}"
+            />
+            <div *ngIf="f['poids'].touched && f['poids'].invalid" class="error">
+              <div *ngIf="f['poids'].errors?.['required']">Le poids est requis.</div>
+              <div *ngIf="f['poids'].errors?.['min']">Le poids doit être supérieur à 0.</div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="col-md-6">
+          <div class="form-group">
+            <label for="groupeSanguin">Groupe sanguin <span class="text-danger">*</span></label>
+            <select
+              id="groupeSanguin"
+              formControlName="groupeSanguin"
+              class="form-control"
+              [ngClass]="{'is-invalid': f['groupeSanguin'].touched && f['groupeSanguin'].invalid}"
+            >
+              <option value="" disabled>Sélectionner</option>
+              <option value="A+">A+</option>
+              <option value="A-">A-</option>
+              <option value="B+">B+</option>
+              <option value="B-">B-</option>
+              <option value="AB+">AB+</option>
+              <option value="AB-">AB-</option>
+              <option value="O+">O+</option>
+              <option value="O-">O-</option>
+            </select>
+            <div *ngIf="f['groupeSanguin'].touched && f['groupeSanguin'].invalid" class="error">
+              <div *ngIf="f['groupeSanguin'].errors?.['required']">Le groupe sanguin est requis.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+
+        <div class="col-md-6">
+          <div class="form-group">
+            <label for="categorie">Catégorie <span class="text-danger">*</span></label>
+            <select
+              id="categorie"
+              formControlName="categorie"
+              class="form-control"
+              [ngClass]="{'is-invalid': f['categorie'].touched && f['categorie'].invalid}"
+            >
+              <option value="" disabled>Sélectionner</option>
+              <option value="MALADE_CHRONIQUE"> Malade chronique</option>
+              <option value="PERSONNE_AGEE">Personne Age</option>
+              <option value="FEMME_ENCEINTE" [disabled]="isHomme">Femme enceinte</option>
+              <option value="ENFANT">Enfant</option>
+              <option value="AUTRE">Autre</option>
+            </select>
+            <div *ngIf="f['categorie'].touched && f['categorie'].invalid" class="error">
+              <div *ngIf="f['categorie'].errors?.['required']">La catégorie est requise.</div>
+            </div>
+          </div>
+          
         </div>
 
-        <div class="form-group col-sm-3">
-          <label>Groupe Sanguin *</label>
-          <select formControlName="groupeSanguin">
-            <option value="">Sélectionner</option>
-            <option value="O+">O+</option>
-            <option value="O-">O-</option>  
-            <option value="A+">A+</option>
-            <option value="A-">A-</option>
-            <option value="B+">B+</option>
-            <option value="B-">B-</option>
-            <option value="AB+">AB+</option>
-            <option value="AB-">AB-</option>
-          </select>
-          <div *ngIf="f['groupeSanguin'].touched && f['groupeSanguin'].invalid" class="error">Groupe Sanguin requis.</div>
+       <div class="col-md-6">
+        <div class="form-group">
+          <label for="adresse">Adresse <span class="text-danger">*</span></label>
+          <input
+            type="text"
+            id="adresse"
+            formControlName="adresse"
+            class="form-control"
+            [ngClass]="{'is-invalid': f['adresse'].touched && f['adresse'].invalid}"
+          />
+          <div *ngIf="f['adresse'].touched && f['adresse'].invalid" class="error">
+            <div *ngIf="f['adresse'].errors?.['required']">L'adresse est requise.</div>
+          </div>
         </div>
-
-        <div class="form-group col-sm-3">
-          <label>Poids *</label>
-          <input type="number" formControlName="poids" placeholder="Poids">
-          <div *ngIf="f['poids'].touched && f['poids'].invalid" class="error">Poids requis (min 30kg).</div>
-        </div>
-
-        <div class="form-group col-sm-3">
-          <label>Cathegorie *</label>
-          <select formControlName="categorie">
-            <option value="">Sélectionner</option>
-            <option  *ngIf="!isHomme"   value="FEMME_ENCEINTE">Femme Enceinte</option>
-            <option value="PERSONNE_AGEE">Personne Agee</option>
-            <option value="MALADE_CHRONIQUE">Malade Chronique</option>
-            <option value="ENFANT">Enfant</option>
-            <option value="AUTRE">Autre</option>
-          </select>
-          <div *ngIf="f['categorie'].touched && f['categorie'].invalid" class="error">categorie requis.</div>
-        </div>
-
        </div>
-       <div class="row">
-        <div class="form-group col-sm-6">
-          <label>Adresse *</label>
-          <input type="text" formControlName="adresse" placeholder="Adresse">
-          <div *ngIf="f['adresse'].touched && f['adresse'].invalid" class="error">Adresse requise.</div>
+       
+
+      </div>
+      
+      
+      
+      <!-- Informations de contact -->
+      <h4>Informations de contact</h4>
+      <div class="row">
+        <div class="col-md-6">
+          <div class="form-group">
+            <label for="email">Email <span class="text-danger">*</span></label>
+            <input
+              type="email"
+              id="email"
+              formControlName="email"
+              class="form-control"
+              [ngClass]="{'is-invalid': f['email'].touched && f['email'].invalid}"
+            />
+            <div *ngIf="f['email'].touched && f['email'].invalid" class="error">
+              <div *ngIf="f['email'].errors?.['required']">L'email est requis.</div>
+              <div *ngIf="f['email'].errors?.['email']">L'email n'est pas valide.</div>
+            </div>
+          </div>
         </div>
-
-        <div class="form-group col-sm-6">
-          <label>Photo</label>
-          <input type="file" formControlName="photo" placeholder="Photo">
-        </div>
-
-        <input type="hidden" value="PATIENT" formControlName="role">
-        <input type="hidden" value="password123" formControlName="password">
-
-       </div> 
-     
-
-
-
         
-        <button type="submit" [disabled]="patientForm.invalid">VALIDER</button>
-        <button class="annuler" (click)="onCancel()"  >ANNULER</button>
-      </form>
-
-    </app-card>
+        <div class="col-md-6">
+          <div class="form-group">
+            <label for="telephone">Téléphone <span class="text-danger">*</span></label>
+            <input
+              type="tel"
+              id="telephone"
+              formControlName="telephone"
+              class="form-control"
+              [ngClass]="{'is-invalid': f['telephone'].touched && f['telephone'].invalid}"
+            />
+            <div *ngIf="f['telephone'].touched && f['telephone'].invalid" class="error">
+              <div *ngIf="f['telephone'].errors?.['required']">Le téléphone est requis.</div>
+              <div *ngIf="f['telephone'].errors?.['pattern']">Le téléphone doit contenir 9 chiffres.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Mot de passe -->
+      <div class="row" *ngIf="!isEditMode">
+        <div class="col-md-6">
+          <div class="form-group">
+            <label for="password">Mot de passe <span class="text-danger">*</span></label>
+            <input
+              type="password"
+              id="password"
+              formControlName="password"
+              class="form-control"
+              [ngClass]="{'is-invalid': f['password'].touched && f['password'].invalid}"
+            />
+            <div *ngIf="f['password'].touched && f['password'].invalid" class="error">
+              <div *ngIf="f['password'].errors?.['required']">Le mot de passe est requis.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    
+      
+      <!-- Boutons d'action -->
+      <div class="text-center">
+        <button type="button" class="annuler" (click)="onCancel()">Annuler</button>
+        <button type="submit" [disabled]="patientForm.invalid">
+          {{ isEditMode ? 'Mettre à jour' : 'Enregistrer' }}
+        </button>
+      </div>
+    </form>
   </div>
-</div>  
-
-<!-- <header>
-  <nav>
-      <ul>
-          <li><a href="/sample-page">Hospitalisé</a></li>
-          <li><a href="/patient">Malade Externe</a></li>
-      </ul>
-  </nav>
-  <button class="add-patient">+ Ajout Patient</button>
-</header>
-<main>
-  <div class="patient-card">
-      <img src="assets/images/user/avatar-2.jpg" alt="Photo Patient">
-      <div class="patient-info">
-          <h3>Mamadou Barry</h3>
-          <p>Hypertension</p>
-          <p>Âge : 30 ans</p>
-      </div>
-      <div class="patient-room">
-          <p>Chambre 10</p>
-      </div>
-  </div>
-  <div class="patient-card">
-      <img src="assets/images/user/avatar-2.jpg" alt="Photo Patient">
-      <div class="patient-info">
-          <h3>Khady Ndiaye</h3>
-          <p>Hypertension</p>
-          <p>Âge : 30 ans</p>
-      </div>
-      <div class="patient-room">
-          <p>Chambre 10</p>
-      </div>
-  </div>
- 
-</main> -->
+</div>

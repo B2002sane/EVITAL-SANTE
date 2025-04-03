@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { UtilisateurService, Utilisateur } from 'src/app/service/utilisateur.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 import Swal from 'sweetalert2';
 
 @Component({
@@ -19,7 +20,7 @@ export class PatientComponent implements OnInit {
   currentPage: number = 1;
   itemsPerPage: number = 6;
 
-  constructor(private utilisateurService: UtilisateurService ) {}
+constructor(private utilisateurService: UtilisateurService , private router:Router ) {}
 
  
   ngOnInit(): void {
@@ -74,13 +75,9 @@ export class PatientComponent implements OnInit {
   }
 
 
-
-
-
-
-
-
-
+  editPatient(patientId: string) {
+    this.router.navigate(['/sample-page', patientId]);
+  }
 
   
 
@@ -150,10 +147,11 @@ export class PatientComponent implements OnInit {
 
 
 
-  
+  // Dans le fichier patient.component.ts, ajouter cette méthode:
+
+afficherDossierMedical(patientId: string): void {
+  this.router.navigate(['/dossier-medical', patientId]);
+}
 
   
 }
-
-
-

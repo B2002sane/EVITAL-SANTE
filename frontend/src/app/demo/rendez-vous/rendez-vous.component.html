@@ -1,100 +1,94 @@
-<!-- rendez-vous.component.html -->
 <div class="rendez-vous-container">
-    <header class="header">
-      <h1>Gestion des rendez vous</h1>
-      <button class="btn-attente" (click)="filterByStatus('en_attente')">Demandes en Attente</button>
-    </header>
+  <header class="header">
+    <h1>Gestion des rendez vous</h1>
+    <button class="btn-attente" (click)="filtrerParStatus('en_attente')">Demandes en Attente</button>
+  </header>
   
-    <div class="filters">
-      <div class="date-filter">
-        <input 
-          type="date" 
-          [(ngModel)]="dateFilter" 
-          (change)="filterByDate()" 
-          placeholder="Date"
-        />
-        <button class="search-btn" (click)="filterByDate()">
-          <i class="fa fa-search"></i>
-        </button>
-      </div>
-  
-      <div class="status-filter">
-        <select [(ngModel)]="statusFilter" (change)="applyFilters()">
-          <option value="">Tous les statuts</option>
-          <option value="en_attente">En attente</option>
-          <option value="confirme">Confirmé</option>
-          <option value="annule">Annulé</option>
-          <option value="termine">Terminé</option>
-        </select>
-        <div class="view-selector">
-          <select [(ngModel)]="viewMode" (change)="applyFilters()">
-            <option value="jour">Jour</option>
-            <option value="semaine">Semaine</option>
-            <option value="mois">Mois</option>
-          </select>
-        </div>
-      </div>
-    </div>
-  
-    <div class="rendez-vous-grid">
-      <div class="rendez-vous-card" *ngFor="let rdv of filteredRendezVous">
-        <div class="card-header">
-          <h3>RENDEZ VOUS</h3>
-          <p>Consultation</p>
-        </div>
-        
-        <div class="card-content">
-          <div class="patient-info">
-            <i class="fa fa-user"></i>
-            <span>{{ rdv.patientNom }} {{ rdv.patientPrenom }}</span>
-          </div>
-          
-          <div class="date-info">
-            <i class="fa fa-calendar"></i>
-            <span>{{ rdv.date | date:'dd/MM/yyyy' }}</span>
-          </div>
-          
-          <div class="time-info">
-            <i class="fa fa-clock"></i>
-            <span>{{ rdv.date | date:'HH:mm' }}</span>
-          </div>
-  
-          <div class="motif-info">
-            <span><strong>Motif:</strong> {{ rdv.motif }}</span>
-          </div>
-  
-          <div class="medecin-info">
-            <span><strong>Médecin:</strong> {{ rdv.medecinNom }}</span>
-          </div>
-          
-          <div class="card-actions" *ngIf="rdv.status === 'en_attente'">
-            <button class="btn-accept" (click)="acceptRendezVous(rdv._id!)">
-              Accepter
-            </button>
-            <button class="btn-reject" (click)="refuseRendezVous(rdv._id!)">
-              Refuser
-            </button>
-          </div>
-  
-          <div class="card-status" [ngClass]="rdv.status">
-            <span>{{ getStatusLabel(rdv.status || 'en_attente') }}</span>
-          </div>
-        </div>
-      </div>
-    </div>
-  
-    <div *ngIf="filteredRendezVous.length === 0" class="no-results">
-      <p>Aucun rendez-vous ne correspond à vos critères de recherche.</p>
-    </div>
-  
-    <div class="pagination" *ngIf="totalPages > 1">
-      <button [disabled]="currentPage === 1" (click)="changePage(currentPage - 1)">
-        <i class="fa fa-chevron-left"></i>
+  <div class="filters">
+    <div class="date-filter">
+      <input type="text" [(ngModel)]="dateFilter" placeholder="Recherche..." (keyup.enter)="appliquerFiltres()">
+      <button class="search-btn" (click)="appliquerFiltres()">
+        <i class="fa fa-search"></i>
       </button>
-      <span>{{ currentPage }}</span>
-      <span *ngIf="currentPage < totalPages - 1">...</span>
-      <button [disabled]="currentPage === totalPages" (click)="changePage(currentPage + 1)">
-        <i class="fa fa-chevron-right"></i>
-      </button>
+    </div>
+    
+    <div class="status-filter">
+      <select [(ngModel)]="statusFilter" (change)="appliquerFiltres()">
+        <option value="">Tous les statuts</option>
+        <option value="en_attente">En attente</option>
+        <option value="confirme">Confirmé</option>
+        <option value="annule">Annulé</option>
+        <option value="termine">Terminé</option>
+      </select>
+      
+      <select [(ngModel)]="periodeFilter" (change)="appliquerFiltres()">
+        <option value="">Toutes les périodes</option>
+        <option value="jour">Jour</option>
+        <option value="semaine">Semaine</option>
+        <option value="mois">Mois</option>
+      </select>
     </div>
   </div>
+
+  <div class="rendez-vous-grid">
+    <div class="rendez-vous-card" *ngFor="let rdv of rendezVousAffiches">
+      <div class="card-header">
+        <h3>RENDEZ VOUS</h3>
+        <p> {{ rdv.motif }} </p>
+      </div>
+      
+      <div class="card-content">
+        <div class="patient-info">
+          <i class="fa fa-user"></i>
+          Patient: 
+          <span>{{ rdv.patient.prenom }} {{ rdv.patient.nom }}</span>
+        </div>
+        
+        <div class="date-info">
+          <i class="fa fa-calendar"></i>
+          <span>{{ rdv.date | date:'dd/MM/yyyy' }}</span>
+        </div>
+        
+        <div class="time-info">
+          <i class="fa fa-clock"></i>
+          <span>{{ rdv.date | date:'HH:mm' }}</span>
+        </div>
+        
+        <div class="card-status" [ngClass]="rdv.status">
+          {{ getStatusLabel(rdv.status) }}
+        </div>
+        <div class="card-actions" *ngIf="rdv.status === 'en_attente'">
+          <button title="Valiser le rendez-vous" class="btn-accept" (click)="accepterRendezVous(rdv.id!)">
+              <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" style="color: black;" class="bi bi-check2-all" viewBox="0 0 16 16">
+                  <path d="M12.354 4.354a.5.5 0 0 0-.708-.708L5 10.293 1.854 7.146a.5.5 0 1 0-.708.708l3.5 3.5a.5.5 0 0 0 .708 0zm-4.208 7-.896-.897.707-.707.543.543 6.646-6.647a.5.5 0 0 1 .708.708l-7 7a.5.5 0 0 1-.708 0"/>
+                  <path d="m5.354 7.146.896.897-.707.707-.897-.896a.5.5 0 1 1 .708-.708"/>
+                </svg>
+          </button>
+          <button  title="Annuler le rendez-vous" class="btn-reject" (click)="annulerRendezVous(rdv.id!)">
+              <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" style="color: black;" class="bi bi-x-lg" viewBox="0 0 16 16">
+                  <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"/>
+                </svg>
+          </button>
+        </div>
+
+
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="rendezVousAffiches.length === 0" class="no-results">
+    <p>Aucun rendez-vous trouvé.</p>
+  </div>
+
+  <div class="pagination">
+    <button [disabled]="pageActuelle === 1" (click)="changerPage(pageActuelle - 1)">
+      <i class="fa fa-chevron-left"></i>⬅
+    </button>
+    <span>{{ pageActuelle }}</span>
+    <span>...</span>
+    <button [disabled]="pageActuelle === totalPages" (click)="changerPage(pageActuelle + 1)">
+      <i class="fa fa-chevron-right"></i>➡
+    </button>
+  </div>
+</div>
+

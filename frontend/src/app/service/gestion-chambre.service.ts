@@ -72,6 +72,7 @@ export class GestionChambreService {
     return this.http.get<{ chambres: Chambre[] }>(`${this.apiUrl}/chambres`, { params })
       .pipe(
         tap(response => {
+
           // Vérifier que chaque chambre a un ID
           response.chambres.forEach(chambre => {
             if (!chambre.id) {
@@ -88,10 +89,14 @@ export class GestionChambreService {
     return this.http.post<{ chambre: Chambre }>(`${this.apiUrl}/chambres`, chambre);
   }
 
+
+
   // Obtenir les détails d'une chambre spécifique
   getDetailsChambre(id: string): Observable<{ chambre: Chambre }> {
     return this.http.get<{ chambre: Chambre }>(`${this.apiUrl}/chambres/${id}`);
   }
+
+
 
   // Mettre à jour une chambre
   mettreAJourChambre(id: string, chambre: Partial<Chambre>): Observable<{ chambre: Chambre }> {
@@ -103,15 +108,21 @@ export class GestionChambreService {
     return this.http.put<{ chambre: Chambre }>(`${this.apiUrl}/chambres/${id}`, chambre);
   }
 
+
+
   // Supprimer une chambre
   supprimerChambre(id: string): Observable<{ message: string }> {
     return this.http.delete<{ message: string }>(`${this.apiUrl}/chambres/${id}`);
   }
 
+
+
   // Obtenir les patients non hospitalisés
   getPatientsNonHospitalises(): Observable<{ patients: Patient[] }> {
     return this.http.get<{ patients: Patient[] }>(`${this.apiUrl}/patients/non-hospitalises`);
   }
+
+
 
   // Assigner un lit à un patient
   assignerLit(chambreId: string, patientId: string, numeroLit: number): Observable<{ message: string, chambre: Chambre }> {
@@ -121,6 +132,8 @@ export class GestionChambreService {
     );
   }
 
+
+  
   // Libérer un lit
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   libererLit(chambreId: string, numeroLit: number, raison: string = 'Sortie standard'): Observable<{ message: string, chambre: Chambre }> {
@@ -134,6 +147,8 @@ export class GestionChambreService {
   getChambresDisponibles(): Observable<{ chambres: Chambre[] }> {
     return this.http.get<{ chambres: Chambre[] }>(`${this.apiUrl}/chambres-disponibles`);
   }
+
+  
 
   // Obtenir le statut d'occupation d'une chambre
   getStatutOccupation(chambreId: string): Observable<StatutOccupation> {

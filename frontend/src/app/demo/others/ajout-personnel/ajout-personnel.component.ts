@@ -64,17 +64,19 @@ export class AjoutPersonnelComponent implements OnInit {
   get f() { return this.personnelForm.controls; }
 
   loadUserData(userId: string) {
-    this.utilisateurService.getUtilisateurById(userId).subscribe({
-      next: (user) => {
-        // Pré-remplir le formulaire avec les données de l'utilisateur
+    this.utilisateurService.getUtilisateurByIdEdit(userId).subscribe({
+      next: (response) => {
+        // Extraire l'utilisateur du champ "data"
+        const user = response.data;
+        
+        // Pré-remplir le formulaire
         const formData = {
           nom: user.nom || '',
           prenom: user.prenom || '',
           email: user.email || '',
           telephone: user.telephone || '',
-          // Ne pas pré-remplir le mot de passe pour des raisons de sécurité
           genre: user.genre || '',
-          categorie: user.categorie || '',
+          codeRfid: user.codeRfid || '',
           adresse: user.adresse || '',
           photo: '',
           role: user.role || ''
@@ -101,7 +103,7 @@ export class AjoutPersonnelComponent implements OnInit {
           text: 'Impossible de charger les données de l\'utilisateur',
           confirmButtonColor: '#d33'
         });
-        this.router.navigate(['/personnel']);
+        this.router.navigate(['/personnel-medical']);
       }
     });
   }
@@ -164,7 +166,7 @@ export class AjoutPersonnelComponent implements OnInit {
             confirmButtonColor: '#3085d6',
             confirmButtonText: 'OK'
           }).then(() => {
-            this.router.navigate(['/personnel']);
+            this.router.navigate(['/personnel-medical']);
           });
         },
         error: (error) => {

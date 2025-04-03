@@ -2,71 +2,22 @@
 
 namespace App\Http\Controllers;
 
-
-
 use App\Models\Utilisateur;
+use App\Models\DossierMedical;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Str;
-use Tymon\JWTAuth\Contracts\JWTSubject;
+use App\Http\Controllers\DossierMedicalController;
 
 class UtilisateurController extends Controller
 {
+    protected $dossierMedicalController;
 
-
-
-//connexion d'un utilisateur avec token email et mot de passe pour une base de donnees mongodb
-    public function login(Request $request)
+    public function __construct(DossierMedicalController $dossierMedicalController)
     {
-        try {
-            // Validation des données
-            $validator = Validator::make($request->all(), [
-                'email' => 'required|email',
-                'password' => 'required|string'
-            ], [
-                'required' => 'Le champ :attribute est obligatoire',
-                'email' => 'Le format de l\'email est invalide'
-            ]);
-
-            if ($validator->fails()) {
-                return response()->json([
-                    'status' => false,
-                    'message' => 'Erreur de validation',
-                    'errors' => $validator->errors()
-                ], 422);
-            }
-
-            // Récupération de l'utilisateur
-            $utilisateur = Utilisateur::where('email', $request->email)->first();
-
-            if (!$utilisateur || !Hash::check($request->password, $utilisateur->password)) {
-                return response()->json([
-                    'status' => false,
-                    'message' => 'Email ou mot de passe incorrect'
-                ], 401);
-            }
-
-            // Générer un token d'authentification
-            $token = $utilisateur->createToken('auth_token')->plainTextToken;
-
-            return response()->json([
-                'status' => true,
-                'message' => 'Connexion réussie',
-                'data' => [
-                    'utilisateur' => $utilisateur,
-                    'token' => $token
-                ]
-            ], 200);
-
-        } catch (\Exception $e) {
-            return response()->json([
-                'status' => false,
-                'message' => 'Une erreur est survenue lors de la connexion',
-                'error' => $e->getMessage()
-            ], 500);
-        }
+        $this->dossierMedicalController = $dossierMedicalController;
     }
 
 
@@ -127,6 +78,27 @@ class UtilisateurController extends Controller
         }
     }
 
+
+
+
+
+/**
+ * Générer un numéro de dossier unique
+ */
+private function getNextNumeroDossier()
+{
+    $lastDossier = DossierMedical::orderBy('numeroDossier', 'desc')->first();
+    $nextNumero = $lastDossier ? (int) substr($lastDossier->numeroDossier, 2) + 1 : 1;
+    return 'DM' . str_pad($nextNumero, 6, '0', STR_PAD_LEFT);
+}
+
+
+
+
+
+
+
+
     /**
      * Créer un nouvel utilisateur
      */
@@ -184,6 +156,26 @@ class UtilisateurController extends Controller
             
            
 
+              // Si l'utilisateur est un patient, créer automatiquement un dossier médical
+              if ($utilisateur->role === 'PATIENT') {
+                $dossierRequest = new Request([
+                    'taille' => $request->input('taille', 0),
+                    'groupeSanguin' => $utilisateur->groupeSanguin,
+                    'dateNaissance' => $utilisateur->dateNaissance,
+                    'maladies' => $request->input('maladies', ''),
+                    'prescriptions' => $request->input('prescriptions', '')
+                ]);
+                
+                $dossierResponse = $this->dossierMedicalController->create($dossierRequest, $utilisateur->id);
+                $dossierData = json_decode($dossierResponse->getContent(), true);
+                
+                // Ajouter les informations du dossier médical à la réponse
+                $utilisateur->dossierMedical = $dossierData['data'] ?? null;
+            }
+
+
+
+
             return response()->json([
                 'status' => true,
                 'message' => 'Utilisateur créé avec succès',
@@ -216,16 +208,31 @@ class UtilisateurController extends Controller
                     'message' => 'Utilisateur non trouvé'
                 ], 404);
             }
-
+    
             // Masquer le mot de passe
             $utilisateur->makeHidden(['password', 'remember_token']);
-
+    
+            // Renvoyer les propriétés nécessaires
+            $response = [
+                'id' => $utilisateur->id,
+                'nom' => $utilisateur->nom,
+                'prenom' => $utilisateur->prenom,
+                'dateNaissance' => $utilisateur->dateNaissance, // Assurez-vous que cette propriété existe
+                'genre' => $utilisateur->genre,
+                'groupeSanguin' => $utilisateur->groupeSanguin,
+                'categorie' => $utilisateur->categorie,
+                'role' => $utilisateur->role,
+                'email' => $utilisateur->email,
+                'telephone' => $utilisateur->telephone,
+                'matricule' => $utilisateur->matricule
+            ];
+    
             return response()->json([
                 'status' => true,
                 'message' => 'Utilisateur récupéré avec succès',
-                'data' => $utilisateur
+                'data' => $response
             ], 200);
-
+    
         } catch (\Exception $e) {
             return response()->json([
                 'status' => false,
@@ -235,6 +242,11 @@ class UtilisateurController extends Controller
         }
     }
 
+
+
+
+
+    
     /**
      * Mettre à jour un utilisateur
      */
@@ -334,61 +346,59 @@ class UtilisateurController extends Controller
         }
     }
 
-    /**
- * Supprimer plusieurs utilisateurs en une seule requête
- */
-public function destroyMultiple(Request $request)
-{
-    try {
-        // Validation des données
-        $validator = Validator::make($request->all(), [
-            'ids' => 'required|array',
-            'ids.*' => 'required|exists:utilisateurs,_id',
-        ], [
-            'ids.required' => 'Le champ ids est obligatoire.',
-            'ids.array' => 'Le champ ids doit être un tableau.',
-            'ids.*.required' => 'Chaque ID dans le tableau est obligatoire.',
-            'ids.*.exists' => 'Un ou plusieurs IDs sont invalides.',
-        ]);
 
-        if ($validator->fails()) {
+
+
+
+
+        /**
+     * Supprimer plusieurs utilisateurs
+     */
+    public function destroyMultiple(Request $request)
+    {
+        try {
+            // Validation des données
+            $validator = Validator::make($request->all(), [
+                'ids' => 'required|array',
+                'ids.*' => 'exists:utilisateurs,id'
+            ], [
+                'required' => 'Le champ :attribute est obligatoire',
+                'exists' => 'Un ou plusieurs identifiants sont invalides'
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Erreur de validation',
+                    'errors' => $validator->errors()
+                ], 422);
+            }
+
+            // Suppression logique des utilisateurs
+            $ids = $request->input('ids');
+            $utilisateurs = Utilisateur::whereIn('id', $ids)->update(['archive' => true]);
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Utilisateurs supprimés avec succès',
+                'count' => $utilisateurs
+            ], 200);
+
+        } catch (\Exception $e) {
             return response()->json([
                 'status' => false,
-                'message' => 'Erreur de validation',
-                'errors' => $validator->errors()
-            ], 422);
+                'message' => 'Une erreur est survenue lors de la suppression des utilisateurs',
+                'error' => $e->getMessage()
+            ], 500);
         }
-
-        // Récupérer les IDs des utilisateurs à supprimer
-        $ids = $request->ids;
-
-        // Log des IDs reçus
-        \Log::info('IDs reçus pour suppression :', $ids);
-
-        // Suppression logique des utilisateurs
-        $affectedRows = Utilisateur::whereIn('_id', $ids)->update(['archive' => true]);
-
-        // Log du nombre d'utilisateurs affectés
-        \Log::info('Nombre d\'utilisateurs archivés :', ['count' => $affectedRows]);
-
-        return response()->json([
-            'status' => true,
-            'message' => 'Utilisateurs supprimés avec succès',
-            'data' => [
-                'ids' => $ids
-            ]
-        ], 200);
-
-    } catch (\Exception $e) {
-        return response()->json([
-            'status' => false,
-            'message' => 'Une erreur est survenue lors de la suppression des utilisateurs',
-            'error' => $e->getMessage()
-        ], 500);
     }
-}
 
-    
+
+
+
+
+
+      
     /**
  * Assigner une carte RFID à un utilisateur
  */
@@ -441,20 +451,6 @@ public function assignerCarte(Request $request, $id)
 }
 
 
-    /**
-     * Obtenir les patients non hospitalisés
-     */
-  /*  public function getPatientsNonHospitalises()
-    {
-        $patients = Utilisateur::where('hospitalisation', false)
-                                ->where('role', 'PATIENT')
-                                ->get();
 
-        if ($patients->isEmpty()) {
-            return response()->json(['message' => 'Aucun patient non hospitalisé trouvé'], 404);
-        }
-
-        return response()->json(['patients' => $patients]);
-    }*/
 
 }

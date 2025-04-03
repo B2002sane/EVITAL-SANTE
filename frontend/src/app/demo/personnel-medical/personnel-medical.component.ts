@@ -19,7 +19,7 @@ export class PersonnelMedicalComponent implements OnInit {
   
   // Pagination
   currentPage: number = 1;
-  itemsPerPage: number = 5;
+  itemsPerPage: number = 7;
   totalPages: number = 1;
   
   // Filtrage

@@ -32,7 +32,7 @@ export class LoginService {
 
   constructor(private http: HttpClient) {
     // Restaurer l'utilisateur depuis le stockage local si disponible
-    const storedUser = localStorage.getItem('current_user');
+    const storedUser = localStorage.getItem('currentUser');
     if (storedUser) {
       this.currentUserSubject.next(JSON.parse(storedUser));
     }
