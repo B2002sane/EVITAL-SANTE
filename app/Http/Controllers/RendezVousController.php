@@ -250,7 +250,7 @@ class RendezVousController extends Controller
         
 
          // Envoyer un email de confirmation au patient
-         Mail::to($rendezVous->patient->email)->send(new ConfirmationRendezVousNotification($rendezVous));
+         //Mail::to($rendezVous->patient->email)->send(new ConfirmationRendezVousNotification($rendezVous));
 
         return response()->json(['rendezVous' => $rendezVous, 'message' => 'Demande de rendez-vous acceptée']);
     }

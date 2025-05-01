@@ -43,6 +43,24 @@ return [
             ],
         ],
 
+    //  'mongodb' => [
+    //         'driver'   => 'mongodb',
+    //         'dsn'      => env('MONGODB_DSN', null),  // C'est ici qu'on utilise le DSN
+    //         'host'     => env('MONGODB_HOST'),
+    //         'port'     => env('MONGODB_PORT'),
+    //         'database' => env('MONGODB_DATABASE'),
+    //         'username' => env('MONGODB_USERNAME'),
+    //         'password' => env('MONGODB_PASSWORD'),
+    //         'options'  => [
+    //             'authSource' => env('MONGODB_AUTH_SOURCE', 'admin'),
+    //         ],
+    //     ],
+
+
+
+
+
+
         'mysql' => [
             'driver' => 'mysql',
             'url' => env('DB_URL'),

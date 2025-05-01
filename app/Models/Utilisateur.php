@@ -34,6 +34,7 @@ class Utilisateur extends Model implements AuthenticatableContract, JWTSubject
         'categorie',
         'hospitalisation',
         'poids',
+        'taille',
 
         # spécifique aux médecins et médecins-chefs
         'codeRfid',
@@ -55,6 +56,11 @@ class Utilisateur extends Model implements AuthenticatableContract, JWTSubject
     public function dossierMedical()
     {
         return $this->hasOne(DossierMedical::class, 'patientId');
+    }
+
+    public function visites()
+    {
+        return $this->hasMany(Visite::class, 'patientId');
     }
 
     public function rendezVous()

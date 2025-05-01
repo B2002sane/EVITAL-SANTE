@@ -11,27 +11,37 @@ class DossierMedical extends Model
 
     protected $fillable = [
         'idDossier',
-        'poids',
-        'prescriptions',
-        'patientId', //  champ pour lier à un patient
+        'patientId',
+        'allergies',
+        'antecedents_medicaux',
     ];
 
-    // Relation avec le modèle Utilisateur (patient)
+    protected $casts = [
+        'allergies' => 'array',
+        'antecedents_medicaux' => 'array',
+    ];
+
+    // Relation avec le patient
     public function patient()
     {
         return $this->belongsTo(Utilisateur::class, 'patientId');
     }
 
-     // Relation avec les constantes vitales
-     public function constantesVitales()
-     {
-         return $this->hasMany(ConstanteVitale::class, 'dossierMedicalId');
-     }
- 
-     // Relation avec les rendez-vous
-     public function rendezVous()
-     {
-         return $this->hasMany(RendezVous::class, 'dossierMedicalId');
-     }
-         
+    // Relation avec les constantes vitales
+    public function constantesVitales()
+    {
+        return $this->hasMany(ConstanteVitale::class, 'dossierMedicalId');
+    }
+
+    // Relation avec les rendez-vous
+    public function rendezVous()
+    {
+        return $this->hasMany(RendezVous::class, 'dossierMedicalId');
+    }
+
+    // Relation avec les visites
+    public function visites()
+    {
+        return $this->hasMany(Visite::class, 'dossierMedicalId');
+    }
 }

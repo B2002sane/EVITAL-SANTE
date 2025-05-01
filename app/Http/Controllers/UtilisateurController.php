@@ -10,6 +10,8 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Str;
+use App\Mail\AccountCreated;
+use Illuminate\Support\Facades\Mail;
 
 
 class UtilisateurController extends Controller
@@ -141,6 +143,7 @@ class UtilisateurController extends Controller
             $data['matricule'] = $this->generateMatricule(); 
             
             $utilisateur = Utilisateur::create($data);
+
             
            
 
@@ -149,6 +152,12 @@ class UtilisateurController extends Controller
                 'message' => 'Utilisateur créé avec succès',
                 'data' => $utilisateur
             ], 201);
+
+                // Envoi d'un email si le rôle est MEDECIN, INFIRMIER ou SAGE_FEMME
+                if (in_array($utilisateur->role, ['MEDECIN', 'INFIRMIER', 'SAGE_FEMME'])) {
+                    Mail::to($utilisateur->email)->send(new AccountCreated($utilisateur));
+                }
+                    
 
         } catch (\Exception $e) {
             return response()->json([
@@ -277,9 +286,9 @@ class UtilisateurController extends Controller
                     'message' => 'Utilisateur non trouvé'
                 ], 404);
             }
-
             // Suppression logique
-            $utilisateur->update(['archive' => true]);
+            //$utilisateur->update(['archive' => true]);
+            $utilisateur->delete();
 
             return response()->json([
                 'status' => true,
@@ -294,6 +303,10 @@ class UtilisateurController extends Controller
             ], 500);
         }
     }
+
+
+
+
 
 
 

@@ -78,19 +78,18 @@ Route::post('demandes-don/{id}/annuler', [DemandeDonController::class, 'annulerD
 
 
 
-# routes pour la gestion des chambres
-use App\Http\Controllers\ChambreController;
-// Routes CRUD de base
-Route::apiResource('chambres', ChambreController::class);
+// # routes pour la gestion des chambres
+ use App\Http\Controllers\ChambreController;
+ // Routes CRUD de base
+ Route::apiResource('chambres', ChambreController::class);
+ // Routes supplémentaires pour la gestion des lits
+ Route::post('chambres/{id}/assigner-lit', [ChambreController::class, 'assignerLit']);
+ Route::post('chambres/{id}/liberer-lit', [ChambreController::class, 'libererLit']);
+ Route::get('chambres-disponibles', [ChambreController::class, 'chambresDisponibles']);
+ Route::get('chambres/{id}/statut', [ChambreController::class, 'statutOccupation']);
 
-// Routes supplémentaires pour la gestion des lits
-Route::post('chambres/{id}/assigner-lit', [ChambreController::class, 'assignerLit']);
-Route::post('chambres/{id}/liberer-lit', [ChambreController::class, 'libererLit']);
-Route::get('chambres-disponibles', [ChambreController::class, 'chambresDisponibles']);
-Route::get('chambres/{id}/statut', [ChambreController::class, 'statutOccupation']);
-
-// Route pour obtenir les patients non hospitalisés
-Route::get('/patients/non-hospitalises', [ChambreController::class, 'getPatientsNonHospitalises']);
+// // Route pour obtenir les patients non hospitalisés
+ Route::get('/patients/non-hospitalises', [ChambreController::class, 'getPatientsNonHospitalises']);
 
 
 
@@ -124,6 +123,8 @@ Route::post('reset', [PasswordOublierController::class, 'resetPassword']);
 # Routes pour la gestion des constantes vitales
 Route::prefix('utilisateurs')->middleware('jwt.auth')->group(function () {
 
+});    
+
 Route::post('/patients/{patientId}/constantes-vitales', [ConstanteVitaleController::class, 'addConstanteForPatient']);  //ajouter constante-vitale à un patient
 Route::post('/dossiers-medicaux/{dossierMedicalId}/constantes-vitales', [ConstanteVitaleController::class, 'addconstanteForDossierMedical']); //ajouter constante-vitale à un dossier medical
 
@@ -133,10 +134,28 @@ Route::post('/dossiers-medicaux/{dossierMedicalId}/constantes-vitales', [Constan
 Route::post('/patients/{patientId}/dossiers-medicaux', [DossierMedicalController::class, 'create']);  // Créer un nouveau dossier médical
 Route::put('/dossiers-medicaux/{id}', [DossierMedicalController::class, 'update']);  // Mettre à jour un dossier médical existant
 Route::get('/dossiers-medicaux/{id}', [DossierMedicalController::class, 'show']); // Afficher un dossier médical
+Route::delete('/dossiers-medicaux/{id}', [DossierMedicalController::class, 'delete']); // Supprimer un dossier médical
 Route::post('/dossiers-medicaux/{dossierMedicalId}/constantes-vitales', [DossierMedicalController::class, 'addConstanteVitale']); // Ajouter des constantes vitales
 Route::post('/dossiers-medicaux/{dossierMedicalId}/rendez-vous', [DossierMedicalController::class, 'addRendezVous']);  // Ajouter un rendez-vous au dossier médical
+Route::post('dossiers-medicaux{dossierMedicalId}/rendez-vous', [DossierMedicalController::class, 'addRendezVous']); // Ajouter un rendez-vous au dossier médical
+Route::post('/dossiers-medicaux/{dossierMedicalId}/visites', [DossierMedicalController::class, 'addVisite']); // Ajouter une visite au dossier médical
+
+
+
+use App\Http\Controllers\VisiteController;
+
+Route::prefix('visites')->group(function () {
+    Route::get('/{dossierMedicalId}', [VisiteController::class, 'index']);
+    Route::post('/', [VisiteController::class, 'store']);
+    Route::get('/detail/{id}', [VisiteController::class, 'show']);
+    Route::put('/{id}', [VisiteController::class, 'update']);
+    Route::delete('/{id}', [VisiteController::class, 'destroy']);
+    Route::get('/patient/{patientId}', [VisiteController::class, 'getByPatient']);
 
 });
+
+
+
 
 
 
@@ -146,3 +165,9 @@ use App\Http\Controllers\AuthController;
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout']); // Déconnexion
 Route::post('/loginbycard', [AuthController::class, 'loginByCard']);
+
+
+use App\Http\Controllers\GoogleAuthController;
+
+Route::get('/auth/google/redirect', [GoogleAuthController::class, 'redirectToGoogle']);
+Route::get('/auth/google/callback', [GoogleAuthController::class, 'handleGoogleCallback']);
