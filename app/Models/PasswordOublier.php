@@ -9,8 +9,7 @@ class PasswordOublier extends Model
     protected $connection = 'mongodb';
     protected $collection = 'password_reset_tokens';
 
-    protected $fillable = ['email', 'token', 'created_at'];
+    protected $fillable = ['email', 'otp', 'created_at', 'otp_expires_at'];
 
     public $timestamps = false;
 }
-
