@@ -1,0 +1,20 @@
+services:
+  - type: web
+    name: evital
+    runtime: php
+    buildCommand: |
+      composer install --no-dev --optimize-autoloader
+      php artisan optimize:clear
+      php artisan migrate --force
+    startCommand: php artisan serve --host=0.0.0.0 --port=${PORT}
+    envVars:
+      - key: APP_ENV
+        value: production
+      - key: APP_DEBUG
+        value: false
+      - key: APP_KEY
+        value: base64:52JEyu0CIxQ0ELeASaPdNwaeXUVfZ0u3GSkJbvW2x/U=
+      - key: DB_CONNECTION
+        value: mongodb
+      - key: MONGODB_DSN
+        value: mongodb+srv://${MONGO_USERNAME}:${MONGO_PASSWORD}@cluster0.qfmbf7h.mongodb.net/evital?retryWrites=true&w=majority
