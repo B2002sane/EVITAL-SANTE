@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: evital
+    name: evital-sante
     runtime: php
     buildCommand: |
       composer install --no-dev --optimize-autoloader
