@@ -31,30 +31,30 @@ return [
 
     'connections' => [
 
-        'mongodb' => [
-            'driver' => 'mongodb',
-            'host' => env('DB_HOST', '127.0.0.1'),
-            'port' => env('DB_PORT', 27017),
-            'database' => env('DB_DATABASE', 'evital'),
-            'username' => env('DB_USERNAME', ''),
-            'password' => env('DB_PASSWORD', ''),
-            'options' => [
-                'database' => env('DB_AUTHENTICATION_DATABASE', 'admin'),
+        // 'mongodb' => [
+        //     'driver' => 'mongodb',
+        //     'host' => env('DB_HOST', '127.0.0.1'),
+        //     'port' => env('DB_PORT', 27017),
+        //     'database' => env('DB_DATABASE', 'evital'),
+        //     'username' => env('DB_USERNAME', ''),
+        //     'password' => env('DB_PASSWORD', ''),
+        //     'options' => [
+        //         'database' => env('DB_AUTHENTICATION_DATABASE', 'admin'),
+        //     ],
+        // ],
+
+     'mongodb' => [
+            'driver'   => 'mongodb',
+            'dsn'      => env('MONGODB_DSN', null),  // C'est ici qu'on utilise le DSN
+            'host'     => env('MONGODB_HOST'),
+            'port'     => env('MONGODB_PORT'),
+            'database' => env('MONGODB_DATABASE'),
+            'username' => env('MONGODB_USERNAME'),
+            'password' => env('MONGODB_PASSWORD'),
+            'options'  => [
+                'authSource' => env('MONGODB_AUTH_SOURCE', 'admin'),
             ],
         ],
-
-    //  'mongodb' => [
-    //         'driver'   => 'mongodb',
-    //         'dsn'      => env('MONGODB_DSN', null),  // C'est ici qu'on utilise le DSN
-    //         'host'     => env('MONGODB_HOST'),
-    //         'port'     => env('MONGODB_PORT'),
-    //         'database' => env('MONGODB_DATABASE'),
-    //         'username' => env('MONGODB_USERNAME'),
-    //         'password' => env('MONGODB_PASSWORD'),
-    //         'options'  => [
-    //             'authSource' => env('MONGODB_AUTH_SOURCE', 'admin'),
-    //         ],
-    //     ],
 
 
 
