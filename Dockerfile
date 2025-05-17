@@ -69,6 +69,10 @@ RUN php artisan config:cache \
     && php artisan view:cache \
     && chown -R www-data:www-data /var/www \
     && chmod -R 775 storage bootstrap/cache
+    
+
+RUN mkdir -p /run/php && chown www-data:www-data /run/php
+    
 
 # Exposition du port
 EXPOSE 80
