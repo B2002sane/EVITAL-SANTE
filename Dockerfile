@@ -1,66 +1,77 @@
 FROM php:8.3-fpm
 
-# Arguments pour MongoDB
+# Arguments pour la configuration
 ARG MONGODB_VERSION=2.0.0
 
-# Dépendances système
+# Installation des dépendances système
 RUN apt-get update && apt-get install -y \
-    git curl unzip libssl-dev pkg-config libzip-dev \
-    nginx supervisor \
-    && apt-get clean && rm -rf /var/lib/apt/lists/*
+    git \
+    curl \
+    libssl-dev \
+    pkg-config \
+    libzip-dev \
+    unzip \
+    nginx \
+    supervisor \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
 
-# Extensions PHP
+# Installation des extensions PHP nécessaires
 RUN pecl install mongodb-${MONGODB_VERSION} \
     && docker-php-ext-enable mongodb \
     && docker-php-ext-install pdo_mysql zip opcache
 
-# PHP Production config
-RUN echo 'opcache.memory_consumption=128' > /usr/local/etc/php/conf.d/opcache.ini \
-    && echo 'log_errors=1' > /usr/local/etc/php/conf.d/error.ini \
-    && echo 'display_errors=0' >> /usr/local/etc/php/conf.d/error.ini \
-    && echo 'upload_max_filesize=32M' >> /usr/local/etc/php/conf.d/error.ini \
-    && echo 'post_max_size=32M' >> /usr/local/etc/php/conf.d/error.ini \
-    && echo 'memory_limit=512M' >> /usr/local/etc/php/conf.d/error.ini
+# Configuration d'OPcache pour la production
+RUN { \
+    echo 'opcache.memory_consumption=128'; \
+    echo 'opcache.interned_strings_buffer=8'; \
+    echo 'opcache.max_accelerated_files=4000'; \
+    echo 'opcache.revalidate_freq=2'; \
+    echo 'opcache.fast_shutdown=1'; \
+    echo 'opcache.enable_cli=1'; \
+    } > /usr/local/etc/php/conf.d/opcache-recommended.ini
 
-# Composer
+# Configuration PHP pour la production
+RUN { \
+    echo 'log_errors=1'; \
+    echo 'display_errors=0'; \
+    echo 'upload_max_filesize=32M'; \
+    echo 'post_max_size=32M'; \
+    echo 'memory_limit=512M'; \
+    } > /usr/local/etc/php/conf.d/production.ini
+
+# Installation de Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Configuration Nginx et Supervisor
+# Configuration de Nginx
 COPY docker/nginx/nginx.conf /etc/nginx/sites-available/default
-COPY docker/supervisor/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
-
-# Logs via stdout/stderr
 RUN ln -sf /dev/stdout /var/log/nginx/access.log \
     && ln -sf /dev/stderr /var/log/nginx/error.log
 
+# Configuration de Supervisor
+COPY docker/supervisor/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+
+# Définition du répertoire de travail
 WORKDIR /var/www
 
-# Copie fichier d’environnement
-COPY .env .env
-
-# Copie fichiers Composer
+# Copie des fichiers de l'application
 COPY composer.json composer.lock ./
-
-# Dépendances PHP
 RUN composer install --no-dev --no-scripts --no-autoloader
 
-# Copie de l’application
 COPY . .
 
-# Dump autoloader optimisé
+# Installation des dépendances et optimisation de l'autoloader
 RUN composer dump-autoload --no-dev --optimize
 
-# Cache de config & routes uniquement (API)
+# Optimisations Laravel
 RUN php artisan config:cache \
     && php artisan route:cache \
-    && php artisan key:generate --force \
-    && mkdir -p storage/logs \
-    && touch storage/logs/laravel.log \
+    && php artisan view:cache \
     && chown -R www-data:www-data /var/www \
     && chmod -R 775 storage bootstrap/cache
 
-# Port exposé (Render, Heroku, etc.)
+# Exposition du port
 EXPOSE 80
 
-# Lancement via supervisord
+# Lancement des services
 CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
