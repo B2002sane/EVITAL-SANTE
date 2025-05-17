@@ -1,7 +1,7 @@
 FROM php:8.3-fpm
 
 # Arguments pour la configuration
-ARG MONGODB_VERSION=1.12.0
+ARG MONGODB_VERSION=2.0.0
 
 # Installation des dépendances système
 RUN apt-get update && apt-get install -y \
