@@ -1,7 +1,7 @@
-FROM php:8.2-fpm
+FROM php:8.4-fpm
 
 # Arguments pour la configuration
-ARG MONGODB_VERSION=1.16.1
+ARG MONGODB_VERSION=2.0.0
 
 # Installation des dépendances système
 RUN apt-get update && apt-get install -y \
@@ -13,7 +13,6 @@ RUN apt-get update && apt-get install -y \
     unzip \
     nginx \
     supervisor \
-    libcurl4-openssl-dev \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
@@ -32,15 +31,13 @@ RUN { \
     echo 'opcache.enable_cli=1'; \
     } > /usr/local/etc/php/conf.d/opcache-recommended.ini
 
-# Configuration PHP pour la production et MongoDB
+# Configuration PHP pour la production
 RUN { \
     echo 'log_errors=1'; \
     echo 'display_errors=0'; \
     echo 'upload_max_filesize=32M'; \
     echo 'post_max_size=32M'; \
     echo 'memory_limit=512M'; \
-    echo 'default_socket_timeout=300'; \
-    echo 'max_execution_time=300'; \
     } > /usr/local/etc/php/conf.d/production.ini
 
 # Installation de Composer
@@ -57,27 +54,31 @@ COPY docker/supervisor/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 # Définition du répertoire de travail
 WORKDIR /var/www
 
-# Copie des fichiers de l'application
 COPY . .
 
-# Installation des dépendances et optimisation de l'autoloader
-RUN composer install --no-dev --optimize-autoloader
+# Copie des fichiers de l'application
+COPY composer.json composer.lock ./
+RUN composer install --no-dev --no-scripts --no-autoloader
 
-# Création des répertoires de logs et configuration des permissions
-RUN mkdir -p /var/www/storage/logs \
-    && touch /var/www/storage/logs/laravel.log \
-    && chmod -R 775 /var/www/storage \
-    && chmod -R 775 /var/www/bootstrap/cache \
-    && mkdir -p /run/php \
+
+
+# Installation des dépendances et optimisation de l'autoloader
+RUN composer dump-autoload --no-dev --optimize
+
+# Optimisations Laravel
+RUN php artisan config:cache \
+    && php artisan route:cache \
+    && php artisan view:cache \
     && chown -R www-data:www-data /var/www \
+    && chmod -R 775 storage bootstrap/cache\
+    && mkdir -p /run/php \
     && chown www-data:www-data /run/php
+
+
+    
 
 # Exposition du port
 EXPOSE 80
 
-# Script de démarrage pour configurer l'application au lancement
-COPY start.sh /start.sh
-RUN chmod +x /start.sh
-
 # Lancement des services
-CMD ["/start.sh"]
+CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
