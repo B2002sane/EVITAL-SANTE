@@ -65,11 +65,13 @@ RUN composer install --no-dev --no-scripts --no-autoloader
 # Installation des dépendances et optimisation de l'autoloader
 RUN composer dump-autoload --no-dev --optimize
 
+# Generate Laravel key
+RUN php artisan key:generate
+
 # Optimisations Laravel
 RUN php artisan config:cache \
     && php artisan route:cache \
     && php artisan view:cache \
-    && artisan key:generate \
     && chown -R www-data:www-data /var/www \
     && chmod -R 775 storage bootstrap/cache\
     && mkdir -p /run/php \
