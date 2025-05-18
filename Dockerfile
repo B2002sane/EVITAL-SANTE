@@ -1,4 +1,4 @@
-FROM php:8.4-fpm
+FROM php:8.3-fpm
 
 # Arguments pour la configuration
 ARG MONGODB_VERSION=2.0.0
