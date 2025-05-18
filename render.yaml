@@ -1,9 +1,30 @@
+# render.yaml
 services:
   - type: web
     name: evital-sante
     env: docker
-    plan: free
-    dockerfilePath: Dockerfile
-    buildCommand: ""
-    startCommand: ./start.sh
+    dockerfilePath: ./Dockerfile
+    envVars:
+      - key: APP_ENV
+        value: production
+      - key: APP_DEBUG
+        value: "false"
+      - key: APP_URL
+        fromService:
+          name: evital-sante
+          type: web
+          property: host
+      - key: MONGODB_DSN
+        sync: false
+      - key: APP_KEY
+        generateValue: true
     healthCheckPath: /
+    # Augmentez les timeout pour les opérations MongoDB lentes
+    buildCommand: echo "Docker build handled by Render"
+    startCommand: ./start.sh
+    # Configurations pour de meilleures performances
+    autoDeploy: true
+    disk:
+      name: evital-data
+      mountPath: /var/www/storage
+      sizeGB: 1
