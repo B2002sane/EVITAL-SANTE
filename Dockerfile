@@ -75,7 +75,6 @@ RUN php artisan config:cache \
     && chown www-data:www-data /run/php
 
 
-RUN php artisan key:generate 
 
     
 
