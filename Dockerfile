@@ -54,11 +54,12 @@ COPY docker/supervisor/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 # Définition du répertoire de travail
 WORKDIR /var/www
 
+COPY . .
+
 # Copie des fichiers de l'application
 COPY composer.json composer.lock ./
 RUN composer install --no-dev --no-scripts --no-autoloader
 
-COPY . .
 
 # Installation des dépendances et optimisation de l'autoloader
 RUN composer dump-autoload --no-dev --optimize
