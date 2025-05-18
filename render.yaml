@@ -1,0 +1,9 @@
+services:
+  - type: web
+    name: evital-sante
+    env: docker
+    plan: free
+    dockerfilePath: Dockerfile
+    buildCommand: ""
+    startCommand: ./start.sh
+    healthCheckPath: /
