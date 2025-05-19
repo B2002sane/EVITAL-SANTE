@@ -1,4 +1,4 @@
-FROM php:8.2-fpm
+FROM php:8.4-fpm
 
 # Arguments pour la configuration
 ARG MONGODB_VERSION=2.0.0
@@ -38,7 +38,6 @@ RUN { \
     echo 'upload_max_filesize=32M'; \
     echo 'post_max_size=32M'; \
     echo 'memory_limit=512M'; \
-    echo 'listen = 9000'; \
     } > /usr/local/etc/php/conf.d/production.ini
 
 # Installation de Composer
@@ -81,8 +80,6 @@ RUN php artisan config:cache \
 
 # Exposition du port
 EXPOSE 80
-
-RUN echo 'display_errors=1' >> /usr/local/etc/php/conf.d/production.ini
 
 
 # Lancement des services
