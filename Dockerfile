@@ -38,6 +38,7 @@ RUN { \
     echo 'upload_max_filesize=32M'; \
     echo 'post_max_size=32M'; \
     echo 'memory_limit=512M'; \
+    echo 'listen = 9000'; \
     } > /usr/local/etc/php/conf.d/production.ini
 
 # Installation de Composer
