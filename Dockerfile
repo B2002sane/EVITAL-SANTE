@@ -81,5 +81,8 @@ RUN php artisan config:cache \
 # Exposition du port
 EXPOSE 80
 
+RUN echo 'display_errors=1' >> /usr/local/etc/php/conf.d/production.ini
+
+
 # Lancement des services
 CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
