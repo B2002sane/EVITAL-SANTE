@@ -67,6 +67,8 @@ WORKDIR /var/www
 COPY composer.json composer.lock ./
 RUN composer install --no-dev --no-scripts --no-autoloader
 
+COPY .env .env
+
 COPY . .
 
 # Installation des dépendances et optimisation de l'autoloader
