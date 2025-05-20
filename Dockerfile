@@ -67,7 +67,6 @@ WORKDIR /var/www
 COPY composer.json composer.lock ./
 RUN composer install --no-dev --no-scripts --no-autoloader
 
-COPY .env .env
 
 COPY . .
 
@@ -75,8 +74,7 @@ COPY . .
 RUN composer dump-autoload --no-dev --optimize
 
 # Optimisations Laravel
-RUN php artisan config:cache \
-    && php artisan route:cache \
+RUN && php artisan route:cache \
     && php artisan view:cache \
     && chown -R www-data:www-data /var/www \
     && chmod -R 775 storage bootstrap/cache\
