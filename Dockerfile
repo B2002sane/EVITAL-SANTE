@@ -31,6 +31,7 @@ RUN { \
     echo 'opcache.enable_cli=1'; \
     } > /usr/local/etc/php/conf.d/opcache-recommended.ini
 
+
 # Configuration PHP pour la production
 RUN { \
     echo 'log_errors=1'; \
@@ -39,6 +40,12 @@ RUN { \
     echo 'post_max_size=32M'; \
     echo 'memory_limit=512M'; \
     } > /usr/local/etc/php/conf.d/production.ini
+
+# Forcer PHP-FPM à écouter sur le bon port
+RUN sed -i 's|^listen = .*|listen = 127.0.0.1:9000|' /usr/local/etc/php-fpm.d/www.conf
+
+    
+
 
 # Installation de Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
