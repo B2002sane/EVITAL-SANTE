@@ -102,7 +102,7 @@ class UtilisateurController extends Controller
                 'email' => 'required|email|unique:utilisateurs,email',
                 'password' => 'required|string|min:6',
                 'role' => ['required', Rule::in(['PATIENT', 'MEDECIN', 'SAGE_FEMME','INFIRMIER','MEDECIN_CHEF', 'DONNEUR'])],
-                'genre' => ['required', Rule::in(['HOMME', 'FEMME'])],
+                'genre' => ['nullable', Rule::in(['HOMME', 'FEMME'])],
                 'adresse' => 'nullable|string',
     
                 'photo' => 'nullable|string',
@@ -110,7 +110,7 @@ class UtilisateurController extends Controller
                 // Validation conditionnelle selon le rôle
                 'dateNaissance' => 'required_if:role,PATIENT|date|nullable',
                 'groupeSanguin' => [
-                    'required_if:role,PATIENT,DONNEUR',
+                    'required_if:role,DONNEUR',
                     Rule::in(['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'])
                 ],
                 'categorie' => [
@@ -118,7 +118,7 @@ class UtilisateurController extends Controller
                     Rule::in(['FEMME_ENCEINTE', 'PERSONNE_AGEE', 'MALADE_CHRONIQUE', 'ENFANT', 'AUTRE'])
                 ],
                 'poids' => 'nullable|numeric|min:0',
-                'codeRfid' => 'required_if:role,MEDECIN,SAGE_FEMME,INFIRMIER,MEDECIN_CHEF|string|unique:utilisateurs,codeRfid|nullable',
+                'codeRfid' => 'string|nullable',
             ], [
                 'required' => 'Le champ :attribute est obligatoire',
                 'email' => 'Le format de l\'email est invalide',
